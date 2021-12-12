@@ -42,8 +42,6 @@ string Solution::solve(int A, int B, int C, int D, vector<int> &E, vector<int> &
           // first checking wheter the point (0,0) lies in circle or not
           if(inCircle(0,0,C,D,E,F))
            return "NO";
-          
-          
           while(myque.size()){
               // pick first element of queue
               pair<int,int> temp=myque.front();
