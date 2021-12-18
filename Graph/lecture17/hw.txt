@@ -1,0 +1,3 @@
+https://www.spoj.com/problems/DAGCNT2/
+https://codeforces.com/problemset/problem/721/C
+https://www.spoj.com/problems/DAGCNT/
