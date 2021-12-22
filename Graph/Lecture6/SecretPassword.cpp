@@ -70,7 +70,7 @@ void Union(vi &parent,vi &rank,ll a,ll b){
 }
 int main(int argc, char const *argv[]) {
     clock_t begin = clock();
-    // file_i_o();
+    file_i_o();
     // Write your code here....
     ll n;
     std::cin>>n;
