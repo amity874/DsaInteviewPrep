@@ -44,53 +44,47 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
-		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
+void travel(std::vector<std::vector<int>> &arr,std::vector<std::vector<bool>> &visited,std::vector<int>&bag,int n,int m,int i,int j){
+	if(i<0 or j<0 or i>=n or j>=m or visited[i][j],arr[i][j]==0){
 		return;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+	visited[i][j]=true;
+	bag.push_back(arr[i][j]);
+	travel(arr,visited,bag,n,m,i-1,j);
+	travel(arr,visited,bag,n,m,i,j+1);
+	travel(arr,visited,bag,n,m,i-1,j-1);
+	travel(arr,visited,bag,n,m,i+1,j);
+}
+int goldMine(std::vector<std::vector<int>> &arr,int n,int m){
+int ans=0;
+std::vector<std::vector<bool>> visited(n,std::vector<bool>(m));
+for(int i=0;i<n;i++){
+	for(int j=0;j<m;j++){
+		if(arr[i][j]!=0){
+			std::vector<int>bag;
+			travel(arr,visited,bag,n,m,i,j);
+		}
+		int new_ans=0;
+		for(int i=0;i<bag.size();i++){
+			new_ans+=bag[i];
+		}
+		if(ans<new_ans){
+			ans=new_ans;
 		}
 	}
 }
+return ans;
+}
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
+	// file_i_o();
+		int n,m;
+		std::cin>>n>>m;
+		std::vector<std::vector<int>> arr(n,std::vector<int>(m));
+		for(int i = 0; i < n; i++){
+			for(int j = 0 ;j<m; j++){
+				std::cin>>arr[i][j];
+			}
 		}
-		else{
-			chmap[ch]++;
-		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+		goldMine(arr,n,m);
 	return 0;
 }

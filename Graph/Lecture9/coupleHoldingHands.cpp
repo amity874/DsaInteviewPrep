@@ -44,53 +44,45 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
-		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
-		return;
+int Get(std::vector<int>&parent,int a){
+      return parent[a]=((parent[a]==a)?a:Get(parent,parent[a]));
+}
+void Union(std::vector<int>&parent,std::vector<int>&rank,int x,int y){
+	int a=Get(parent,x);
+	int b=Get(parent,y);
+	if(rank[a]==rank[b]){
+		rank[a]++;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
-		}
+	else if(rank[a]>rank[b]){
+		parent[b]=a;
+	}
+	else if(rank[b]>rank[a]){
+		parent[a]=b;
 	}
 }
+int minSwapsCouples(vector<int>& row) {
+	int n=row.size();
+	int n1=row.size()/2;
+	std::vector<int>rank(n);
+	std::vector<int>parent(n);
+	for(int i=0;i<n;i++){
+		parent[i]=i;
+		rank[i]=1;
+	}
+	for(int i=0;i<n1;i++){
+		int x=row[i]/2;
+		int y=row[i+1]/2;
+		Union(x,y,parent);
+	}
+	int component=0;
+	for(int i=0;i<n;i++){
+		if(parent[i]!=i){
+			component++;
+		}
+	}
+	return n1-component;
+}
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
-		}
-		else{
-			chmap[ch]++;
-		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+	file_i_o();
 	return 0;
 }

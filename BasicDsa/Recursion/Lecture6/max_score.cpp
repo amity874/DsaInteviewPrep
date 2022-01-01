@@ -44,53 +44,59 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
-		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
-		return;
+int solution(std::vector<std::string>&words,std::vector<int>&freq,std::vector<int>&score,int idx){
+	if(idx==words.size()){
+		return 0;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+	int ans1=solution(words,freq,score,idx+1);
+	std::string temp=words[idx];
+	bool flag=true;
+	int sword=0;
+	for(int i=0;i<temp.size();i++){
+		char ch=temp[i];
+		if(freq[ch-'0']==0){
+			flag=false;
 		}
+		freq[ch-'0']--;
+        sword+=score[ch-'a'];
 	}
+	int ans2=0;
+	if(flag){
+		ans2=solution(words,freq,score,idx+1)+sword;
+	}
+	for(int i=0;i<temp.size();i++){
+		char ch=temp[i];
+		freq[ch-'0']++;
+	}
+	return std::max(ans1,ans2);
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
+	// file_i_o();
+		int nofWords;
+		std::cin>>nofWords;
+		std::vector<std::string>words(nofWords);
+		for(int i = 0 ; i < words.size(); i++) {
+			std::cin>>words[i];
 		}
-		else{
-			chmap[ch]++;
+		int nofLetters;
+		std::cin>>nofLetters;
+		std::vector<char>latters(nofLetters);
+		for (int i = 0; i < latters.size(); i++) {
+			std::cin>>latters[i];
 		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
+		std::vector<int>score(26);
+		for (int i = 0; i < score.size(); i++) {
+			std::cin>>score[i];
 		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+		// if (words==NULL || words.size() == 0 || letters == NULL || letters.size() == 0 || score == NULL
+		// 		|| score.size() == 0) {
+		// 	std::cout<<0;
+		// 	return 0;
+		// }
+		std::vector<int>freq(26);
+		for(auto ch:latters){
+			freq[ch-'0']++;
+		}
+		std::cout<<solution(words, freq, score, 0);
 	return 0;
 }

@@ -44,23 +44,24 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
+void solution(int idx,int nlenght,std::map<char,int>&chmap,char oddchar,std::string osf){
+	if(idx>=nlenght){
 		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
+		for(int i=osf.size()-1;i>=0 ;i--){
 			rev+=osf[i];
 		}
+		std::string res=osf;
 		if(oddchar!=NULL){
-			osf+=oddchar;
+			res+=oddchar;
 		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
+	    res+=rev;
+		std::cout<<res<<"\n";
 		return;
 	}
-	for(auto&ch:chmap){
+	for(auto &ch:chmap){
 		int freq=ch.second;
 		if(freq>0){
-			ch.second=freq-1;
+	     ch.second=freq-1;
 			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
 			ch.second=freq;
 		}
@@ -69,7 +70,7 @@ void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddcha
 int main(int argc, char const *argv[]) {
 	std::string s;
 	std::cin>>s;
-	std::unordered_map<char,int> chmap;
+	std::map<char,int> chmap;
 	for(int i=0;i<s.size();i++){
 		char ch=s[i];
 		if(!chmap.count(ch)){
@@ -82,15 +83,18 @@ int main(int argc, char const *argv[]) {
 	int odd=0;
 	char oddchar;
 	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
+	for(auto& ch:chmap){
+		int x=ch.second;
+		if((x%2)!=0){
+			oddchar=ch.ff;
 			odd++;
 		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
+		ch.second=ch.second/2;
+		nlenght+=x/2;
 	}
-	solution(0,nlenght,oddchar,chmap,"");
+	if(odd>1){
+	    return 0;
+	}
+	solution(0,nlenght,chmap,oddchar,"");
 	return 0;
 }

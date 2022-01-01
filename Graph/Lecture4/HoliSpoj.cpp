@@ -3,7 +3,6 @@
 #include<bits/stdc++.h>
 #define ll long long int
 std::vector<std::list<std::pair<ll,ll>>> graph;
-ll ans=0;
 int cs=1;
 ll helper(std::vector<ll>&count,std::vector<bool>&vis,ll node,ll n,ll &ans){
     count[node]=1;

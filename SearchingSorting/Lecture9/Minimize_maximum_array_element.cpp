@@ -44,53 +44,39 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
-		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
-		return;
+bool possible(std::vector<int>&v,int mid,int k){
+	int count=0;
+	for(int i=0;i<v.size();i++){
+		count+=v[i]/mid;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
-		}
-	}
+	return count<=k;
+}
+int minimize_maximum(std::vector<int>&v,int n,int k){
+	std::vector<int>::iterator result = std::min_element(v.begin(), v.end());
+    int lo=std::distance(v.begin(), result);
+    result=std::max_element(v.begin(),v.end());
+    int hi=std::distance(v.begin(),result);
+    int ans=0;
+    while(lo<=hi){
+    	int mid=lo+(hi-lo)/2;
+    	if(possible(v,mid,k)){
+    		ans=mid;
+    		hi=mid-1;
+    	}
+    	else{
+    		lo=mid+1;
+    	}
+    }
+    return ans;
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
-		}
-		else{
-			chmap[ch]++;
-		}
+	// file_i_o();
+	int n,k;
+	std::cin>>n>>k;
+	std::vector<int>arr(n);
+	loop(i,0,n-1){
+		std::cin>>arr[i];
 	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+	std::cout<<minimize_maximum(arr,n,k);
 	return 0;
 }

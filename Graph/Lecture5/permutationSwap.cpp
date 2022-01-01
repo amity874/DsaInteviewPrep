@@ -90,13 +90,12 @@ int main(int argc, char const *argv[]) {
             std::cin>>u>>v;
             u--;
             v--;
-            // log(u, v, g.size());
             g[u].pb(v);
             g[v].pb(u);
         }
         std::vector<bool> vis(n, false);
         ll cc = 0; // no of connected component
-         bool flag = true;
+        bool flag = true;
         for(int j = 0; j < n; j++) {
             if(not vis[j]) {
                 cc++;
@@ -105,7 +104,6 @@ int main(int argc, char const *argv[]) {
                 for(int i = 0; i < idx.size(); i++) {
                     el.insert(p[idx[i]]);
                 }
-               
                 for(int i = 0; i < idx.size(); i++) {
                     int element = q[idx[i]];
                     if(el.count(element) == 0) {

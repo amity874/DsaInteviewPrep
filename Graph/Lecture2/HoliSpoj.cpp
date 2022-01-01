@@ -44,53 +44,46 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
-		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
-		return;
-	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+int c=0;
+std::vector<std::list<std::pair<ll,ll>>> g;
+ll dfsHelper(int src,std::vector<bool>&visited,std::vector<int>&count,ll &ans,int n){
+	count[src]=1;
+	visited[src]=true;
+	for(auto &neighbour:g[src]){
+		if(!visited[neighbour.first]){
+			count[src]+=dfsHelper(neighbour.first,visited,count,ans,n);
+			ans+=2*neighbour.second*std::min(count[neighbour.first],n-count[neighbour.first]);
 		}
 	}
+	return count[src];
+}
+ll dfs(int n){
+	std::vector<bool>visited(n,false);
+	std::vector<int>count(n,0);
+	ll ans=0;
+	dfsHelper(0,visited,count,ans,n);
+	return ans;
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
+	file_i_o();
+	ll t;
+	std::cin>>t;
+	while(t--){
+	    ll n;
+		std::cin>>n;
+		g.resize(n,std::list<std::pair<ll,ll>>());
+		for(int i=0;i<n-1;i++){
+			ll u;
+			ll v;
+			ll wt;
+			std::cin>>u>>v>>wt;
+			u--;
+			v--;
+			g[u].push_back({v,wt});
+			g[v].push_back({u,wt});
 		}
-		else{
-			chmap[ch]++;
-		}
+	std::cout<<"Case #"<<++c<<":"<<dfs(n)<<"\n";
+	g.clear();
 	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
 	return 0;
 }

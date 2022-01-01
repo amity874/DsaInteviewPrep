@@ -44,53 +44,47 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
+int counter=0;
+void solution(int idx,int n,int k,int cset,std::vector<std::vector<int>>&res){
+	if(idx>n){
+		if(cset==k){
+			counter++;
+			std::cout<<counter<<". ";
+			for(int i=0;i<res.size();i++){
+			    std::cout<<"[";
+				for(auto &el:res[i]){
+					std:cout<<el;
+				}
+				std::cout<<"]";
+			}
+			std::cout<<"\n";
 		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
 		return;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+	for(int j=0;j<res.size();j++){
+		if(res[j].size()>0){
+		  //  std::cout<<"gdfgdf";
+			res[j].push_back(idx);
+			solution(idx+1,n,k,cset,res);
+			res[j].pop_back();
+		}
+       else{
+			res[j].push_back(idx);
+			solution(idx+1,n,k,cset+=1,res);
+			res[j].pop_back();
+			break;
 		}
 	}
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
-		}
-		else{
-			chmap[ch]++;
-		}
+	// file_i_o();
+	int n,k;
+	std::cin>>n>>k;
+	std::vector<std::vector<int>> res;
+	for(int i=0; i < k; i++) {
+		res.push_back(std::vector<int>());
 	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+	int cset=0;
+	solution(1, n,k,cset, res);
 	return 0;
 }

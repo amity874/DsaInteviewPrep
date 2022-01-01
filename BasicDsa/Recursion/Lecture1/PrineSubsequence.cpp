@@ -44,14 +44,20 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void PrintSub(std::string str,std::string& osf,int i){
-	if(i==str.size()){
+void printSubsequence(std::string &str,std::string osf){
+	if(str.size()==0){
 		std::cout<<osf<<" ";
 		return;
 	}
-	PrintSub(str,std::tostring(str[i]+osf),i+1)+PrintSub(str,str[i],i+1);
+	char ch=str[0];
+	std::string ros=str.substr(1);
+	printSubsequence(ros,osf+ch);
+	printSubsequence(ros,osf);
 }
+
 int main(int argc, char const *argv[]) {
-	file_i_o();
+	// file_i_o();
+	std::string a="Abc";
+	printSubsequence(a," ");
 	return 0;
 }

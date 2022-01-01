@@ -44,53 +44,31 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
-		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
+void wordBreak(string &str, string ans,std::set<std::string>&hset){
+	if(str.size()==0){
+		std::cout<<ans<<"\n";
 		return;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+	for(int i=0;i<str.size();i++){
+		std::string left=str.substr(0,i+1);
+		std::string right=str.substr(i+1);
+		if(hset.count(left)){
+			wordBreak(right,ans+left+" ",hset);
 		}
 	}
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
+	// file_i_o();
+		int n;
+		std::cin>>n;
+		std::set<std::string> hset;
+		for(int i = 0  ; i  < n; i++){
+			std::string s1;
+			std::cin>>s1;
+			hset.insert(s1);
 		}
-		else{
-			chmap[ch]++;
-		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+		std::string sentence;
+		std::cin>>sentence;
+		wordBreak(sentence,"",hset);
 	return 0;
 }

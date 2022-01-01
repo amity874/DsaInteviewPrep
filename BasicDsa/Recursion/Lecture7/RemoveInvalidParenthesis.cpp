@@ -33,7 +33,6 @@ void err(istream_iterator<string> it, T a, Args... args) {
 	err(++it, args...);
 }
 //typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
-
 void file_i_o()
 {
     ios_base::sync_with_stdio(0); 
@@ -44,53 +43,47 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
+int getMin(string &str){
+	std::stack<char> st;
+	for(int i=0;i<str.size();i++){
+		char ch=str[i];
+		if(ch=='('){
+			st.push(ch);
 		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
-		return;
-	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
-		}
-	}
-}
-int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
+		else if(ch==')' &&st.top()=='('){
+			st.pop();
 		}
 		else{
-			chmap[ch]++;
+			st.push(ch);
 		}
 	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
+	return st.size();
+}
+void solution(string str, int minRemoval,std::set<std::string>&hset){
+	if(minRemoval==0){
+		int currmin=getMin(str);
+		if(currmin==0){
+			if(!hset.count(str)){
+				std::cout<<str<<"\n";
+				hset.insert(str);
+			}
 		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
+		return;
 	}
-	solution(0,nlenght,oddchar,chmap,"");
+	for(int i=0;i<str.size();i++){
+		std::string left=str.substr(0,i);
+		std::string right=str.substr(i+1);
+		solution(left+right,minRemoval--,hset);
+	}
+}
+
+int main(int argc, char const *argv[]) {
+	// file_i_o();
+	int n;
+	std::cin>>n;
+	std::string s;
+	std::cin>>s;
+	std::set<std::string> hset;
+	solution(s,getMin(s),hset);
 	return 0;
 }

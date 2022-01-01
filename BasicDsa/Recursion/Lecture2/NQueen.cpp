@@ -44,53 +44,38 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
+bool isItsafe(vector<vector<int>>&chess,int row,int col){
+	for(int i=row-1;i>=0;i--){
+		if(chess[i][col]==1){
+			return false;
 		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
+	}
+	for(int i=row-1,j=col-1;i>=0 && j>=0;i--,j--){
+		if(chess[i][j]==1){
+			return false;
 		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
+	}
+	for(int i=row-1,j=col+1;i>=0 && j<=chess.size()-1;i--,j++){
+		if(chess[i][j]==1){
+			return false;
+		}
+	}
+	return true;
+}
+void printNQueens(vector<vector<int>> chess,string qsf, int row){
+	if(row==chess.size()){
+		std::cout<<qsf<<"\n";
 		return;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+	for(int i=0;i<chess.size();i++){
+		if(isItsafe(chess,row,i)){
+		 chess[row][i]=1;
+		 printNQueens(chess,qsf+to_string(row)+"-"+to_string(i)+", ",row+1);
+		 chess[row][i]=0;
 		}
 	}
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
-		}
-		else{
-			chmap[ch]++;
-		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+	file_i_o();
 	return 0;
 }

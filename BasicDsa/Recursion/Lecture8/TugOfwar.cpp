@@ -44,53 +44,43 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
+int Min=INT_MAX;
+void solution(int idx,std::vector<int>&arr,std::vector<int>&set1,std::vector<int>&set2,int sos1,int sos2){
+	if(idx==arr.size()){
+		int diff=std::abs(sos1-sos2);
+		if(diff<Min){
+			Min=diff;
 		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
+		for(auto &el:set1){
+			std::cout<<el<<" ";
 		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
+		std::cout<<"\n";
+		for(auto &el:set2){
+			std::cout<<el<<" ";
+		}
 		return;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
-		}
+	if(set1.size()<(arr.size()+1)/2){
+	set1.push_back(arr[idx]);
+	solution(idx+1,arr,set1,set2,sos1+arr[idx],sos2);
+	set1.pop_back();
+	}
+	if(set2.size()<(arr.size()+1)/2){
+	set2.push_back(arr[idx]);
+	solution(idx+1,arr,set1,set2,sos1,sos2+arr[idx]);
+	set2.pop_back();
 	}
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
-		}
-		else{
-			chmap[ch]++;
-		}
+	// file_i_o();
+	int n;
+	std::cin>>n;
+	std::vector<int> arr(n,0);
+	loop(i,0,n-1){
+		std:cin>>arr[i];
 	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+	std::vector<int>set1;
+	std::vector<int>set2;
+	solution(0,arr,set1,set2,0,0);
 	return 0;
 }

@@ -44,53 +44,37 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
+std::string Max="0";
+std::string Swap(std::string&s1,int i,int j){
+	std::string left=s1.substr(0,i+1);
+	std::string middle=s1.substr(i+1,j);
+	std::string right=s1.substr(j+1);
+	return left+std::to_string(j)+middle+std::to_string(i)+right;
+}
+void findMaximum(std::string &str,int k){
+	if(k==0){
+		if(std::stoi(str)>std::stoi(Max)){
+			Max=str;
 		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
 		return;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+	for(int i=0;i<str.size()-1;i++){
+		for(int j=i+1;j<str.size();j++){
+			if(str[i]<str[j]){
+				std::string swapped=Swap(str,i,j);
+				findMaximum(swapped,k--);
+			}
 		}
 	}
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
-		}
-		else{
-			chmap[ch]++;
-		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+	// file_i_o();
+		std::string s1;
+		std::cin>>s1;
+		int k;
+		std::cin>>k;
+		Max = s1;
+		findMaximum(s1, k);
+		std::cout<<Max<<"\n";
 	return 0;
 }

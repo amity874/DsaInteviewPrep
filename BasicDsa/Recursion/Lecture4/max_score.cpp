@@ -44,53 +44,56 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
+int solution(std::vector<std::string>&words,std::vector<int>&freq,std::vector<int>&score,int idx){
+	int ans1=solution(words,freq,score,idx+1);
+	std::string s1=words[idx];
+	bool flag=true;
+	int ans2score=0;
+	for(int i=0;i<s1.size();i++){
+		char ch=s1[i];
+		if(freq[ch-'a']==0){
+			flag=false;
+			continue;
 		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
-		return;
+		freq[ch-'a']--;
+		ans2score+=score[ch-'a'];
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
-		}
+	if(flag){
+		int ans2=ans2score+solution(words,freq,score,idx+1);
 	}
+	for(int i=0;i<s1.size();i++){
+		char ch=s1[i];
+		freq[ch-'a']++;
+	}
+	return std::max(ans1,ans2);
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
+	// file_i_o();
+		int nofWords;
+		std::cin>>nofWords;
+		std::vector<std::string>words(nofWords);
+		for(int i = 0 ; i < words.size(); i++) {
+			std::cin>>words[i];
 		}
-		else{
-			chmap[ch]++;
+		int nofLetters;
+		std::cin>>nofLetters;
+		std::vector<char>latters(nofLetters);
+		for (int i = 0; i < latters.size(); i++) {
+			std::cin>>latters[i];
 		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
+		std::vector<int>score(26);
+		for (int i = 0; i < score.size(); i++) {
+			std::cin>>score[i];
 		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+		// if (words==NULL || words.size() == 0 || letters == NULL || letters.size() == 0 || score == NULL
+		// 		|| score.size() == 0) {
+		// 	std::cout<<0;
+		// 	return 0;
+		// }
+		std::vector<int>freq(26);
+		for(auto ch:latters){
+			freq[ch-'a']++;
+		}
+		std::cout<<solution(words, freq, score, 0);
 	return 0;
 }

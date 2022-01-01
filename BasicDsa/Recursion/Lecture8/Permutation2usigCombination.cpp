@@ -44,53 +44,26 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
-		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
-		return;
-	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+void permutations(int n,int idx,int k,int ssf,std::vector<bool>&items,std::string osf){
+	if(idx==n){
+		if(ssf==k){
+			std::cout<<osf<<"\n";
 		}
 	}
+	for(int i=0;i<n;i++){
+		if(!items[i]){
+			items[i]=true;
+			permutations(n,idx+1,k,ssf+1,items,osf+std::to_string(i+1));
+			items[i]=false;
+		}
+	}
+	permutations(n,idx+1,k,ssf,items,osf+std::to_string(0));
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
-		}
-		else{
-			chmap[ch]++;
-		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+	// file_i_o();
+	int n,m;
+	std::cin>>n>>m;
+    std::vector<bool>items(n,0);
+    permutations(n,0,m,0,items,"");
 	return 0;
 }

@@ -44,53 +44,47 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-void solution(int idx,int nlenght,std::unordered_map<char,int>&chmap,char oddchar,std::string osf){
-	if(idx>nlenght){
-		std::string rev="";
-		for(int i=osf.size()-1;i>=0;i--){
-			rev+=osf[i];
+void solution(std::string &s,std::string &pattern,std::unordered_map<char,string> &mp,std::string &op){
+	if(pattern.size()==0){
+		if(s.size()==0){
+			std::unordered_set<char>mp1;
+			for(char ch:op){
+				if(!mp1.count(ch)){
+					std::cout<<ch<<" -> "<<mp[ch]<<", ";
+					mp1.insert(ch);
+				}
+			}
+			std::cout<<"."<<"\n";
 		}
-		if(oddchar!=NULL){
-			osf+=oddchar;
-		}
-		osf+=rev;
-		std::cout<<osf<<"\n";
 		return;
 	}
-	for(auto&ch:chmap){
-		int freq=ch.second;
-		if(freq>0){
-			ch.second=freq-1;
-			solution(idx+1,nlenght,chmap,oddchar,osf+ch.first);
-			ch.second=freq;
+	char ch=pattern[0];
+	std::string Pros=pattern.substr(1);
+	if(mp.count(ch)){
+		std::string p_mapping=mp[ch];
+		if(s.size()>=p_mapping.size()){
+			std::string left=s.substr(0,p_mapping.size());
+			std::string right=s.substr(p_mapping.size());
+			if(p_mapping==left){
+				solution(right,Pros,mp,op);
+			}
+		}
+	}
+	else{
+		for(int i=0;i<s.size();i++){
+			std::string left=s.substr(0,i+1);
+			std::string right=s.substr(i+1);
+			mp[ch]=left;
+			solution(right,Pros,mp,op);
+			mp.erase(ch);
 		}
 	}
 }
 int main(int argc, char const *argv[]) {
-	std::string s;
-	std::cin>>s;
-	std::unordered_map<char,int> chmap;
-	for(int i=0;i<s.size();i++){
-		char ch=s[i];
-		if(!chmap.count(ch)){
-			chmap[ch]=1;
-		}
-		else{
-			chmap[ch]++;
-		}
-	}
-	int odd=0;
-	char oddchar;
-	int nlenght=0;
-	for(int i=0;i<s.size();i++){
-		int x=chmap[s[i]];
-		if(x%2!=0){
-			oddchar=chmap[s[i]];
-			odd++;
-		}
-		chmap[s[i]]=chmap[s[i]]/2;
-		nlenght+=chmap[s[i]]/2;
-	}
-	solution(0,nlenght,oddchar,chmap,"");
+	// file_i_o();
+		std::string s,pattern;
+		std::cin>>s>>pattern;
+		std::unordered_map<char,string> mp;
+		solution(s,pattern,mp,pattern);
 	return 0;
 }
