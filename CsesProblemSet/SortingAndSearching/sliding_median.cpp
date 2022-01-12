@@ -1,6 +1,7 @@
 #include<bits/stdc++.h>
-//#include<ext/pb_ds/assoc_container.hpp>
-//using namespace __gnu_pbds;
+#include<ext/pb_ds/assoc_container.hpp>
+#include<ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 #define ll 				long long int
 #define ld				long double
@@ -24,15 +25,14 @@ using namespace std;
 #define logarr(arr,a,b)	for(int z=(a);z<=(b);z++) cout<<(arr[z])<<" ";cout<<endl;	
 #define token(str,ch)	(std::istringstream var((str)); vs v; string t; while(getline((var), t, (ch))) {v.pb(t);} return v;)
 vs tokenizer(string str,char ch) {std::istringstream var((str)); vs v; string t; while(getline((var), t, (ch))) {v.pb(t);} return v;}
-
-
+#define ordered_set     tree <std::pair<int,int>,null_type,less<std::pair<int,int>>,rb_tree_tag , tree_order_statistics_node_update >
 void err(istream_iterator<string> it) {}
 template<typename T, typename... Args>
 void err(istream_iterator<string> it, T a, Args... args) {
 	cout << *it << " = " << a << endl;
 	err(++it, args...);
 }
-//typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
 
 void file_i_o()
 {
@@ -44,26 +44,23 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
-	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
-}
-int main(int argc, char const *argv[]) {
+
+signed main(int argc, char const *argv[]) {
 	file_i_o();
-	return 0;
+	int n,k;
+	std::cin>>n>>k;
+	std::vector<int>arr(n);
+	for(int i=0;i<n;i++){
+		std::cin>>arr[i];
+	}
+	ordered_set os;
+	for(int i=0;i<n;i++){
+		os.insert({arr[i],i});
+		if(i>=k){
+			os.erase({arr[i-k],i-k});
+		}
+		if(i>=(k-1)){
+			std::cout<<(*os.find_by_order((k-1)/2)).first<<" ";
+		}
+	}
 }

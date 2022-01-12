@@ -44,26 +44,56 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
+struct Node{
+	int data=-1;
+	Node*left=NULL;
+	Node*right=NULL;
+	Node(int data){
+		this->data=data;
 	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
+};
+Node* BuildBinaryTree(){
+	int d;
+	std::cin>>d;
+	if(d==-1){
+		return NULL;
+	}
+	Node* root=new Node(d);
+	root->left=BuildBinaryTree();
+	root->right=BuildBinaryTree();
+	return root;
 }
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
+void LevelOrder(Node *root){
+	if(root==NULL){
+		return;
 	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
+	std::queue<Node*> qu;
+	qu.push(root);
+	qu.push(NULL);
+	while(not qu.empty()){
+		Node *curr=qu.front();
+		if(curr==NULL){
+			std::cout<<"\n";
+			qu.pop();
+			if(!qu.empty()){
+				qu.push(NULL);
+			}
+		}
+		else{
+			std::cout<<curr->data<<" ";
+			qu.pop();
+			if(curr->left){
+				qu.push(curr->left);
+			}
+			if(curr->right){
+				qu.push(curr->right);
+			}
+		}
+	}
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	Node *n=BuildBinaryTree();
+	LevelOrder(n);
 	return 0;
 }

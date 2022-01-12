@@ -44,26 +44,40 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
+bool possible(std::vector<ll>&arr,ll mid,ll t){
+	ll ans=0;
+	loop(i,0,arr.size()-1){
+		ans+=std::min(mid/arr[i],t);
 	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
+	return ans>=t;
 }
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
+ll binarySearch(std::vector<ll>&arr,ll t){
+	ll lo=0;
+	ll ans=0;
+	std::vector<ll>::iterator result;
+    result = std::max_element(arr.begin(), arr.end());
+    ll x=std::distance(arr.begin(), result);
+    ll hi=arr[x]*t;
+    while(lo<=hi){
+    	ll mid=lo+(hi-lo)/2;
+    	if(possible(arr,mid,t)){
+    		ans=mid;
+    		hi=mid-1;
+    	}
+    	else{
+    		lo=mid+1;
+    	}
+    }
+	return ans;
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	ll n,t;
+	std::cin>>n>>t;
+	std::vector<ll>arr(n);
+	loop(i,0,n-1){
+		std::cin>>arr[i];
+	}
+	std::cout<<binarySearch(arr,t);
 	return 0;
 }

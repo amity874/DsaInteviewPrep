@@ -25,7 +25,6 @@ using namespace std;
 #define token(str,ch)	(std::istringstream var((str)); vs v; string t; while(getline((var), t, (ch))) {v.pb(t);} return v;)
 vs tokenizer(string str,char ch) {std::istringstream var((str)); vs v; string t; while(getline((var), t, (ch))) {v.pb(t);} return v;}
 
-
 void err(istream_iterator<string> it) {}
 template<typename T, typename... Args>
 void err(istream_iterator<string> it, T a, Args... args) {
@@ -44,26 +43,25 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
-	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
-}
+
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	ll a;
+	std::cin>>a;
+	std::vector<ll>arr(a);
+	loop(i,0,a-1){
+		std::cin>>arr[i];
+	}
+	std::unordered_map<ll,ll>prefix;
+	ll sum=0;
+	ll ans=0;
+	prefix[0]=1;
+	for(auto &it:arr){
+		it=(it%a+a)%a;
+		sum+=it;
+		ans+=prefix[sum%a];
+		prefix[sum%a]++;
+	}
+	std::cout<<ans<<"\n";
 	return 0;
 }

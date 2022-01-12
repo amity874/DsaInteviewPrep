@@ -44,25 +44,30 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
-	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
-}
+ vector<int> gardenNoAdj(int n, vector<vector<int>>& paths) {
+ std::vector<int>g[n+1];
+ std:vector<int>color(n+1,0);
+ for(auto &el:paths){
+ 	g[el[0]].push_back(el[1]);
+ 	g[el[1]].push_back(el[0]);
+ }
+ for(int i=1;i<=n;i++){
+ 	if(color[i]>0){
+ 		continue;//it color is already assigned
+ 	}
+ 	std::vector<bool>assign_color(n+1);
+ 	for(auto &ne:g[i]){
+ 		assign_color[color[ne]]=true;
+ 	}
+ 	for(int c=1;c<=4;c++){
+ 		if(!assign_color[c]){
+ 			color[i]=c;
+ 			break;
+ 		}
+ 	}
+ }
+ return color;
+ }
 int main(int argc, char const *argv[]) {
 	file_i_o();
 	return 0;

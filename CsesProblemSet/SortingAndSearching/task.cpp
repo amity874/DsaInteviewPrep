@@ -44,26 +44,22 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
-	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
-}
-int main(int argc, char const *argv[]) {
+
+signed main(int argc, char const *argv[]) {
 	file_i_o();
+	int t;
+	std::cin>>t;
+	std::vector<std::pair<int,int>> tasks(t);
+	for(auto &t:tasks){
+		std::cin>>t.first>>t.second;
+	}
+	std::sort(tasks.begin(),tasks.end());
+	int time=0;
+	int reward=0;
+	for(auto task:tasks){
+		time+=task.first;
+		reward+=task.second-time;
+	}
+	std::cout<<reward<<"\n";
 	return 0;
 }

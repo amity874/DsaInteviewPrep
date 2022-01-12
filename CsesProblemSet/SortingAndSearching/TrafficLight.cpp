@@ -1,3 +1,4 @@
+// https://cses.fi/problemset/task/1163
 #include<bits/stdc++.h>
 //#include<ext/pb_ds/assoc_container.hpp>
 //using namespace __gnu_pbds;
@@ -44,26 +45,32 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
-	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
-}
+
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	ll x;
+	ll n;
+	std::cin>>x>>n;
+	std::set<std::pair<int,int>> ranges;
+	std::multiset<int>length;
+	length.insert(x);
+	ranges.insert({x,0});
+	while(n--){
+		ll x;
+		std::cin>>x;
+		auto lb=ranges.upper_bound({x,-1});
+		int start=(*lb).second;
+		int end=(*lb).first;
+		int len=end-start;
+		// log(start,end,len);
+		ranges.erase(lb);
+		ranges.insert({x,start});
+		ranges.insert({end,x});
+		length.erase(length.find(len));
+		length.insert(x-start);
+		length.insert(end-x);
+		// log(x-start,end-x);
+		std::cout<<(*length.rbegin())<<" ";
+	}
 	return 0;
 }

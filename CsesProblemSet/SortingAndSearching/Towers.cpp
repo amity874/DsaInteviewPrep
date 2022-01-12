@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
 //#include<ext/pb_ds/assoc_container.hpp>
-//using namespace __gnu_pbds;
+// using namespace __gnu_pbds;
 using namespace std;
 #define ll 				long long int
 #define ld				long double
@@ -44,26 +44,25 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
-	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
-}
-int main(int argc, char const *argv[]) {
+signed main(int argc, char const *argv[]) {
 	file_i_o();
+	ll n;
+	std::cin>>n;
+	std::vector<int>arr(n);
+	loop(i,0,n-1){
+		std::cin>>arr[i];
+	}
+	std::multiset<int>st;
+	for(auto el:arr){
+		auto ub=st.upper_bound(el);
+		if(ub!=st.end()){
+			st.erase(ub);
+			st.insert(el);
+		}
+		else{
+			st.insert(el);
+		}
+	}
+	std::cout<<st.size()<<"\n";
 	return 0;
 }

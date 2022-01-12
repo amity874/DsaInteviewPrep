@@ -44,26 +44,40 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
-	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
-}
+
 int main(int argc, char const *argv[]) {
-	file_i_o();
+	// file_i_o();
+	int n,x;
+	std::cin>>n>>x;
+	std::vector<int>arr(n);
+	loop(i,0,n-1){
+		std::cin>>arr[i];
+	}
+	std::unordered_map<int,std::vector<int>> mp;
+	loop(i,0,n-1){
+		mp[arr[i]].push_back(i);
+	}
+	for(int i=0;i<n;i++){
+		for(int j=i+1;j<n;j++){
+			int curr=arr[i]+arr[j];
+			int rem=x-curr;
+			if(mp.find(rem)!=mp.end()){
+				for(auto &it:mp[rem]){
+					std::set<int>st;
+					st.insert(i);
+					st.insert(j);
+					st.insert(it);
+					if(st.size()==3){
+					  for(auto &it:st){
+						std::cout<<it+1<<" ";
+					}
+					std::cout<<"\n";
+					exit(0);
+				}
+				}
+			}
+		}
+	}
+	std::cout<<"IMPOSSIBLE"<<"\n";
 	return 0;
 }

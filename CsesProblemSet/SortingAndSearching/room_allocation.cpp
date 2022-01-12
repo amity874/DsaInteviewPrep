@@ -44,26 +44,43 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
+std::string str="";
+ll allocate_room(std::vector<ll>&arr,std::vector<ll>&dept){
+	ll room=1;
+	ll min_room=1;
+	std::sort(arr.begin(),arr.end());
+	std::sort(dept.begin(),dept.end());
+	ll i=1;
+	ll j=0;
+	str+=std::to_string(1);
+	while(i<arr.size()&&j<dept.size()){
+		if(arr[i]<=dept[j]){
+			i++;
+			room++;
+		}
+		else if(arr[i]>dept[j]){
+			j++;
+			room--;
+		}
+		if(room>min_room){
+			min_room=room;
+		}
 	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
+	return min_room;
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	ll r;
+	std::cin>>r;
+	std::vector<ll>arr(r);
+	std::vector<ll>dept(r);
+	loop(i,0,r-1){
+		std::cin>>arr[i];
+		std::cin>>dept[i];
+	}
+	// logarr(arr,0,arr.size()-1);
+	// logarr(dept,0,arr.size()-1);
+	std::cout<<allocate_room(arr,dept)<<"\n";
+	std::cout<<str;
 	return 0;
 }

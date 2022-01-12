@@ -44,26 +44,44 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-pii Get(std::vector<int>&parent,std::vector<int>&parity,int a){
-	if(parent[a]==a){
-		return{a,0};
-	}
-	pii res=Get(parent,parity,parent[a]);
-	parent[a]=res.first;
-	parity[a]=(parity[a]+res.second)%2;
-	return {parent[a],parity[a]}
-}
-void Union(std::std::vector<int>&parent,std::vector<int>&parity,std::vector<int>&size,int a,int b){
-	pii x=Get(parent,parity,a);
-	pii y=Get(parent,parity,b);
-	if(size[x.first]>size[y.first]){
-		std::swap(x,y);
-	}
-	parent[x.first]=y.first;
-	parity[x.second]=(1+x.second+y.second)%2;
-	size[y.first]+=size[x.first];
-}
+
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	int n,x;
+	std::cin>>n>>x;
+	std::vector<int>arr(n+1);
+	loop(i,0,n-1){
+		std::cin>>arr[i];
+	}
+	map<int,vector<array<int,2>>>mp;
+	for(int i=0;i<n;i++){
+		for(int j=i+1;j<n;j++){
+			mp[arr[i]+arr[j]].push_back({i,j});
+		}
+	}		
+	for(int i=0;i<n;i++){
+		for(int j=i+1;j<n;j++){
+			int rem=x-(arr[i]+arr[j]);
+			if(mp.find(rem)!=mp.end()){
+				for(auto x:mp[rem]){
+					for(auto &it:mp[rem]){
+					std::set<int>st;
+					st.insert(i);
+					st.insert(j);
+					st.insert(it[0]);
+					st.insert(it[1]);
+					if(st.size()==4){
+					 for(auto &it:st){
+						std::cout<<it+1<<" ";
+					}
+					std::cout<<"\n";
+					exit(0);
+				}
+				}
+		}
+	}
+}
+}
+	std::cout<<"IMPOSSIBLE"<<"\n";
 	return 0;
 }
