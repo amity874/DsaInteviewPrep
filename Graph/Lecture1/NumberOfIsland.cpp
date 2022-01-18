@@ -23,8 +23,8 @@ int numIslands(std::vector<std::vector<char>>& grid) {
     for(int i=0;i<n;i++){
         for(int j=0;j<m;j++){
             if(grid[i][j]=='1'){
-                cnt++;
                 dfsHelper(grid,i,j);
+                cnt++;
             }
         }
     }  
