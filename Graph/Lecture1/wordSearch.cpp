@@ -21,7 +21,7 @@ bool dfs(std::vector<std::vector<char>>& board,std::string word,int i,int row,in
 return false;
     }
 if(i==word.size()){
-            return true;
+    return true;
  }
     if(row>=n or col>=m or row<0 or col<0){
         return false;
