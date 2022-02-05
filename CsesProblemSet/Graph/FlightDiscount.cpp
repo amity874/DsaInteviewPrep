@@ -44,13 +44,18 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-std::vector<std::vector<std::pair<ll,ll>>> g;
-vi dijkstra(int src,int n){
+struct e{
+	ll v,wt;
+	bool operator <(e const& other){
+		return wt<other.wt;
+	}
+};
+vi dijkstra(int src,ll n,vector<vector<e>>&g){
 	vector<ll>dist(n+1,inf);
 	vector<bool>visited(n+1,false);
 	priority_queue<pair<ll,ll>,vector<pair<ll,ll>>,greater<pair<ll,ll>>>pq;
-	dist[1]=0;
-	pq.push({0,1});//dist,node
+	dist[src]=0;
+	pq.push({0,src});//dist,node
 	while(not pq.empty()){
 		ll tp=pq.top().second;
 		pq.pop();
@@ -59,9 +64,9 @@ vi dijkstra(int src,int n){
 		}
 		visited[tp]=true;
 		for(auto it:g[tp]){
-			if(dist[tp]+it.second<dist[it.first]){
-				dist[it.first]=dist[tp]+it.second;
-				pq.push({dist[it.first],it.first});
+			if(dist[tp]+it.wt<dist[it.v]){
+				dist[it.v]=dist[tp]+it.wt;
+				pq.push({dist[it.v],it.v});
 			}
 		}
 	}
@@ -69,17 +74,26 @@ vi dijkstra(int src,int n){
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();
-	int n,m;
+	ll n,m;
 	std::cin>>n>>m;
-	g.resize(n+1,std::vector<std::pair<ll,ll>>());
-	while(m--){
-		int u,v,wt;
+	vector<vector<ll>>edges;
+	vector<vector<e>>adjf(n+1);
+	vector<vector<e>>adjr(n+1);
+	for(int i=1;i<=m;i++){
+		ll u,v,wt;
 		std::cin>>u>>v>>wt;
-		g[u].push_back({v,wt});
+		edges.push_back({u,v,wt});
+		adjf[u].push_back({v,wt});
+		adjr[v].push_back({u,wt});
 	}
-	vi dist=djkstra(1,n);
-	for(int i=1;i<=n;i++){
-		std::cout<<dist[i]<<" ";
+	vi ans1=dijkstra(1,n,adjf);
+	vi ans2=dijkstra(n,n,adjr);
+	// logarr(ans1,1,n);
+	// logarr(ans2,1,n);
+	ll ans=ans1[n];
+	for(auto el:edges){
+		ans=std::min(ans,ans1[el[0]]+ans2[el[1]]+el[2]/2);
 	}
+	std::cout<<ans<<"\n";
 	return 0;
 }

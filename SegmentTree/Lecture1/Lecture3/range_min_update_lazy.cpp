@@ -39,7 +39,6 @@ void err(std::istream_iterator<std::string> it, T a, Args... args) {
 }
 //typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
 //typedef trie<std::string,null_type,trie_string_access_traits<>,pat_trie_tag,trie_prefix_search_node_update> pbtrie;
-
 void file_i_o()
 {
     std::ios_base::sync_with_stdio(0); 
@@ -50,11 +49,9 @@ void file_i_o()
     //     freopen("output.txt", "w", stdout);
     // #endif
 }
-
-vi arr; // storing the elemtns
+vi arr; // storing the elements
 vi tree; // array fo segtree
 vi lazy; // for lazy storage
-
 ll query(int nl, int nr, int ti, int l, int r) {
    if(lazy[ti] != 0) {
         // you have a loan
