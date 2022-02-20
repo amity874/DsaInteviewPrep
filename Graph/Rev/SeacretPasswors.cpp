@@ -33,6 +33,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 	err(++it, args...);
 }
 //typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
+
 void file_i_o()
 {
     ios_base::sync_with_stdio(0); 
@@ -43,83 +44,44 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-class DSU{
-	std::vector<int> rank;
-	std::vector<int> parent;
-public:
-	DSU(int n){
-		for(int i=0;i<=n;i++){
-			rank.push_back(0);
-			parent.push_back(i);
-		}
-	}
-	int Get(int a){
-		if(a==parent[a]){
-			return a;
-		}
-		int leader=Get(parent[a]);
-		parent[a]=leader;
-		return leader;
-	}
-	void Union(int a,int b) {
-		a=Get(a);
-		b=Get(b);
-		if(rank[a]==rank[b]){
-			rank[a]++;
-		}
-		if(rank[a]>rank[b]){
-			parent[b]=a;
-		}
-		else{
-			parent[a]=b;
-		}
-	}
-};
-void  solve(){
-	ll n;
-	ll m;
-	std::cin>>n>>m;
-std::vector<std::pair<std::pair<ll,ll>,ll>>g;
-		for(int i=0;i<m;i++){
-			ll u;
-			ll v;
-			ll wt;
-			std::cin>>u>>v>>wt;
-			g.push_back({{u,v},wt});
-		}
-	ll ans=0;
-	ll ones=-1;//represent in binary will be 111111.....1111
-	for(int bit=32;bit>=0;bit--){
-		DSU d(n);
-		int cnt=0;
-		for(auto &ne:g){
-			ll wt=ne.second;
-			ll u=ne.first.first;
-			ll v=ne.first.second;
-			ll prefix=wt & (ones << bit);
-			ll res=ans|  prefix;
-			// log(wt,u,v,prefix,res);
-			if(res!=ans){
-				continue;
-			}
-			if(d.Get(u)==d.Get(v)){
-				continue;
-			}
-			cnt++;
-			d.Union(u,v);
-		}
-		if(cnt!=n-1){
-			ans^=(1<<bit);
-		}
-	}
-	std::cout<<ans<<"\n";
+ll Get(vi &parent,ll a){
+    return parent[a]=((parent[a]==a)?a:Get(parent,parent[a]));
+}
+void Union(vi &parent,vi &rank,ll a,ll b){
+    a=Get(parent,a);
+    b=Get(parent,b);
+    if(rank[a]==rank[b]){
+        rank[a]++;
+    }
+    if(rank[a]>rank[b]){
+        parent[b]=a;
+    }
+    else{
+        parent[a]=b;
+    }
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();
-	int t;
-	std::cin>>t;
-	while(t--){
-		solve();
-	}
+	 ll n;
+    std::cin>>n;
+    vi parent(27);
+    vi rank(27,0);
+    std::vector<bool>temp(27,false);
+    loop(i,0,26)parent[i]=i;
+    for(int i=0;i<n;i++){
+    	std::string str;
+    	cin>>str;
+    	for(int j=0;j<str.size();j++){
+    		temp[str[j]-'a']=true;
+    		Union(parent,rank,str[0]-'a',str[j]-'a');
+    	}
+    }
+    int count=0;
+    for(int i=0;i<27;i++){
+    	if(temp[i]==true && (parent[i]==i)){
+    		count++;
+    	}
+    }
+    std::cout<<count<<"\n";
 	return 0;
 }

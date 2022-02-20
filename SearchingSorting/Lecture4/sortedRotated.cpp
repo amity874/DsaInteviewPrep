@@ -8,7 +8,6 @@ int binary_search(std::vector<int>&arr,int target){
         if(arr[mid]==target){
             return mid;
         }
-        //case 1
         else if(arr[mid]>=arr[lo]){
             if(target>=arr[lo] && target<arr[mid]){
                 hi=mid-1;

@@ -43,83 +43,41 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-class DSU{
-	std::vector<int> rank;
-	std::vector<int> parent;
-public:
-	DSU(int n){
-		for(int i=0;i<=n;i++){
-			rank.push_back(0);
-			parent.push_back(i);
-		}
+int binarySearch(std::vector<pair<pair<int,int>,int>>&sorted,int x,int n){
+     int ans=0;
+	if(x<sorted[n-1].first.first){
+		return -1;
 	}
-	int Get(int a){
-		if(a==parent[a]){
-			return a;
-		}
-		int leader=Get(parent[a]);
-		parent[a]=leader;
-		return leader;
+	else{
+	   int lo=0;
+	   int hi=n-1;
+	   while(lo<=hi){
+	   	int mid=lo+(hi-lo)/2;
+	   	if(sorted[mid].first.first>=x){
+	   		hi=mid-1;
+	   		ans=mid;
+	   	}
+	   	else{
+	   		lo=mid+1;
+	   	}
+	   }
 	}
-	void Union(int a,int b) {
-		a=Get(a);
-		b=Get(b);
-		if(rank[a]==rank[b]){
-			rank[a]++;
-		}
-		if(rank[a]>rank[b]){
-			parent[b]=a;
-		}
-		else{
-			parent[a]=b;
-		}
+	return sorted[ans].second;
+}
+vector<int> findRightInterval(vector<vector<int>>& intervals) {
+	int n=intervals.size();
+	std::vector<pair<pair<int,int>,int>> sorted;
+	for(int i=0;i<n;i++){
+		sorted.push_back({{intervals[i][0],intervals[i][1]},i});
 	}
-};
-void  solve(){
-	ll n;
-	ll m;
-	std::cin>>n>>m;
-std::vector<std::pair<std::pair<ll,ll>,ll>>g;
-		for(int i=0;i<m;i++){
-			ll u;
-			ll v;
-			ll wt;
-			std::cin>>u>>v>>wt;
-			g.push_back({{u,v},wt});
-		}
-	ll ans=0;
-	ll ones=-1;//represent in binary will be 111111.....1111
-	for(int bit=32;bit>=0;bit--){
-		DSU d(n);
-		int cnt=0;
-		for(auto &ne:g){
-			ll wt=ne.second;
-			ll u=ne.first.first;
-			ll v=ne.first.second;
-			ll prefix=wt & (ones << bit);
-			ll res=ans|  prefix;
-			// log(wt,u,v,prefix,res);
-			if(res!=ans){
-				continue;
-			}
-			if(d.Get(u)==d.Get(v)){
-				continue;
-			}
-			cnt++;
-			d.Union(u,v);
-		}
-		if(cnt!=n-1){
-			ans^=(1<<bit);
-		}
+	std::sort(sorted.begin(),sorted.end());
+	vector<int> ans(n);
+	for(int i=0;i<n;i++){
+		ans[i]=binarySearch(sorted,intervals[i][1],n);
 	}
-	std::cout<<ans<<"\n";
+	return ans;
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();
-	int t;
-	std::cin>>t;
-	while(t--){
-		solve();
-	}
 	return 0;
 }

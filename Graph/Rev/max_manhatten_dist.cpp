@@ -49,6 +49,12 @@ int dfs(std::vector<std::vector<int>> grid,int n,int m){
             }
         }
     }
+    loop(i,0,n-1){
+        loop(j,0,m-1){
+            std::cout<<vis[i][j]<<" ";
+        }
+        std::cout<<"\n";
+    }
     qu.push({-1,-1});
     int res=0;
     int xdir[4]={-1,1,0,0};
@@ -71,12 +77,14 @@ int dfs(std::vector<std::vector<int>> grid,int n,int m){
           vis[x][y]=true;
          }
     }
-    return res-1;
+    return res;
 }
 int main(int argc, char const *argv[])
 {
     file_i_o();
-    std::vector<std::vector<int>> arr={{1,0,0},{0,0,0},{0,0,0}};
+    std::vector<std::vector<int>> arr={{0, 1, 0},
+           {0, 0, 1},
+           {0, 0, 0}};
     std::cout<<dfs(arr,3,3);
 return 0;
 }

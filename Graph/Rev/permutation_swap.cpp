@@ -69,6 +69,7 @@ int main(int argc, char const *argv[]) {
     std::cin>>t;
     while(t--) {
         int n, m;
+        
         std::cin>>n>>m;
         g.resize(n, std::list<int> ());
         vi p;

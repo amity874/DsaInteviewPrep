@@ -55,7 +55,7 @@ void file_i_o()
 class graph {
     public:
     int v; // no of vertices
-    std::list<int> *arr;
+    std::list<int>*arr;
 
     graph(int v) {
         this->v = v;
