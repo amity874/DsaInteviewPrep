@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
         ll li,bi;
         std::cin>>li>>bi;
         res+=std::max(((li/l)*(bi/b)),(bi/l)*(li/b));
-    }
+    } 
     std::cout<<res<<"\n";
 return 0;
 }

@@ -1,86 +1,53 @@
-#include<bits/stdc++.h>
 class Solution {
 public:
-void solve(std::vector<std::vector<char>>& board) {
-    int n=board.size();
-    int m=board[0].size();
-   std::vector<std::vector<bool>>vis(n,std::vector<bool>(m,false));
-    std::queue<std::pair<int,int>> qu;
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-             if((i==0 or i==n-1 or j==0 or j==m-1) and  board[i][j]=='O'){
-                 vis[i][j]=true;
-                qu.push({i,j});
+    struct Pair{
+        int val;int x;int y;
+        Pair(){}
+        Pair(int a,int b,int c){
+            x=a;
+            y=b;
+            val=c;
+        }
+        
+    };
+    struct compare{
+      bool operator()(const Pair&a,const Pair&b){
+          return a.val>b.val;
+      }  
+    };
+    int swimInWater(vector<vector<int>>& grid) {
+    int n=grid.size();
+    int xdir[4]={0,0,-1,1};
+    int ydir[4]={1,-1,0,0};
+    int ans=INT_MIN;
+    priority_queue<Pair,vector<Pair>,compare>pq;
+    pq.push(Pair(0,0,grid[0][0]));
+      auto tp=pq.top();
+    cout<<tp.val<<" ";
+    vector<vector<bool>> visited(n,vector<bool>(n,false));
+    while(not pq.empty()){
+        auto tp=pq.top();
+        int l=tp.x;
+        int r=tp.y;
+        int msf=tp.val;
+        pq.pop();
+        if(l==n-1 and  r==n-1){
+            return msf;
+        }
+        if(visited[l][r]==true)
+                continue;
+        visited[l][r]=true;
+        for(int dir=0;dir<4;dir++){
+            int x=l+xdir[dir];
+            int y=r+ydir[dir];
+            if(x<0 or y<0 or x>=n or y>=n or visited[x][y]){
+                continue;
+            }
+            else{
+            pq.push(Pair(x,y,std::max(msf,grid[x][y])));
             }
         }
     }
-int dirx[]={0,0,-1,1};
-int diry[]={-1,1,0,0};
-    while(not qu.empty()){
-        auto top=qu.front();
-        int x=top.first;
-        int y=top.second;
-        qu.pop();
-        for(int i=0;i<4;i++){
-            int nx=x+dirx[i];
-            int ny=y+diry[i];
-            if(nx<n and ny < m and nx>=0 and ny >=0 and board[nx][ny]=='O' and  (not vis[nx][ny])){
-               vis[nx][ny]=true;
-                qu.push({nx,ny});
-            }   
-            }
-    }
-     for(int i=0;i<n;i++){
-               for(int j=0;j<m;j++){
-                   if(!vis[i][j] and board[i][j]=='O'){
-                       board[i][j]='X';
-     }
-     }
-    }
+return 0; 
 }
 };
-void dfs(int i,int j,int n,int m, std::vector<std::vector<bool>>&vis){
-    if(i<0 or j<0 or i>=n or j>=m or (vis[i][j]=='1')){
-        return;
-    }
-    vis[i][j]=true;
-    dfs(i,j+1,n,m,vis);
-    dfs(j+1,j,n,m,vis);
-    dfs(i-1,j,n,m,vis);
-    dfs(i,j-1,n,m,vis);
-}
-    std::vector<std::vector<bool>>vis;
-   void dfs(int i,int j,int n,int m,std::vector<std::vector<char>>& board){
-    if(i<0||i>=n||j<0||j>=m||board[i][j]=='X'||vis[i][j]){
-        return;
-    }
-    vis[i][j]=true;
-    dfs(i-1,j,n,m,board);
-    dfs(i+1,j,n,m,board);
-    dfs(i,j-1,n,m,board);
-    dfs(i,j+1,n,m,board);
-    return;
-}
-void solve(std::vector<std::vector<char>>& board){
-    int n=board.size();
-    int m=board[0].size();
-    vis.resize(n,std::vector<bool>(m,false));
-    for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            if((i==0 or j==0 or i==n-1 or j==m-1) and (board[i][j]=='O')){
-                dfs(i,j,n,m,board);
-            }
-        }
-    }
-     for(int i=0;i<n;i++){
-        for(int j=0;j<m;j++){
-            if(board[i][j]=='O' and (! vis[i][j])){
-                board[i][j]='X';
-            }
-        }
-    }
-}
-int main(int argc, char const *argv[])
-{
-return 0;
-}

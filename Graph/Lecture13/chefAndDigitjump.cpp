@@ -50,7 +50,7 @@ void file_i_o()
 }
 std::vector<ll>g[100005];
 ll bfs(ll src,ll n,std::string str){
-    std::vector<bool>vis(n,false);
+std::vector<bool>vis(n,false);
 std::vector<int>dist(n,0);
     std::queue<ll>qu;
     qu.push(0);
@@ -83,6 +83,8 @@ std::vector<int>dist(n,0);
     }
     return dist[n-1];
 }
+
+
 int main(int argc, char const *argv[]) {
 	clock_t begin = clock();
 	file_i_o();

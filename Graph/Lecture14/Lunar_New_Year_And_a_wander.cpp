@@ -1,5 +1,4 @@
 // https://codeforces.com/problemset/problem/1106/D
-// https://www.codechef.com/problems/DIGJUMP
 #include<bits/stdc++.h>
 using namespace std;
 #define ll 				long long int

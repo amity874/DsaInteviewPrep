@@ -1,4 +1,3 @@
-// https://www.codechef.com/problems/DIGJUMP
 #include<bits/stdc++.h>
 using namespace std;
 #define ll 				long long int
@@ -95,10 +94,6 @@ int main(int argc, char const *argv[]) {
     g[n].push_back({2*n+1,0});
     g[2*n].push_back({2*n+1,0});
     std::set<std::pair<ll,ll>> st;
-	g[0].pb({1, c[1]});
-	g[0].pb({n + 1, c[1]});
-	g[n].pb({2 * n + 1, 0});
-	g[2 * n].pb({2 * n + 1, 0});
 	dist[0] = 0;
 	st.insert({0, 0});
 	while (!st.empty()) {

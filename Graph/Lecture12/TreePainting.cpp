@@ -82,8 +82,6 @@ int main(int argc, char const *argv[]) {
 	// Write your code here....
     ll n;
     std::cin>>n;
-    // memset(dp,0,sizeof(dp));
-    // memset(sz,0,sizeof(sz));
     g.resize(n,std::list<ll>());
     for(int i=0;i<=n-2;i++){
         ll u,v;
@@ -95,6 +93,8 @@ int main(int argc, char const *argv[]) {
     }
     dfs(0,-1);
     m_dfs(0,-1,0,n);
+    logarr(dp,1,10);
+    logarr(sz,1,10);
     std::cout<<result<<"\n";
 	return 0;
 #ifndef ONLINE_JUDGE
