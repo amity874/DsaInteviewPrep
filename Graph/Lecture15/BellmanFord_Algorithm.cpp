@@ -1,18 +1,62 @@
 #include<bits/stdc++.h>
-std::vector<int>g[100005];
-std::vector<int>dist(100005,INT_MAX);
-void BellmanFord_s(int src,int n){
-    for(int i=0;i<n-1;i++){
-        int j=0;
-        while(g[j].size()!=0){
-            if(dist[g[j][0]]+g[j][2]<g[j][1]){
-                dist[g[j][1]]=dist[g[j][0]]+g[j][2];
+using namespace std;
+struct node {
+    int u;
+    int v;
+    int wt; 
+    node(int first, int second, int weight) {
+        u = first;
+        v = second;
+        wt = weight;
+    }
+};
+
+int main(){
+    int N,m;
+    cin >> N >> m;
+    vector<node> edges; 
+    for(int i = 0;i<m;i++) {
+        int u, v, wt;
+        cin >> u >> v >> wt; 
+        edges.push_back(node(u, v, wt)); 
+    }
+    int src;
+    cin >> src; 
+    int inf = 10000000; 
+    vector<int> dist(N, inf); 
+    dist[src] = 0; 
+    for(int i = 1;i<=N-1;i++) {
+        for(auto it: edges) {
+            if(dist[it.u] + it.wt < dist[it.v]) {
+                dist[it.v] = dist[it.u] + it.wt; 
             }
-            j++;
         }
     }
+    int fl = 0; 
+    for(auto it: edges) {
+        if(dist[it.u] + it.wt < dist[it.v]) {
+            cout << "Negative Cycle"; 
+            fl = 1; 
+            break; 
+        }
+    }
+
+    if(!fl) {
+        for(int i = 0;i<N;i++) {
+            cout << i << " " << dist[i] << endl;
+        }
+    }
+    return 0;
 }
-int main(int argc, char const *argv[])
-{
-return 0;
-}
+
+/* 
+6 7 
+3 2 6 
+5 3 1 
+0 1 5 
+1 5 -3 
+1 2 -2 
+3 4 -2 
+2 4 3 
+0
+*/

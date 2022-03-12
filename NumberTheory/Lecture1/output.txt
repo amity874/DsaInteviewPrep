@@ -1,6 +1,0 @@
-Case 1: Not Cube Free 
-Case 2: Not Cube Free 
-Case 3: 47189
-Case 4: 19240
-Case 5: 72922
-Case 6: 74060
