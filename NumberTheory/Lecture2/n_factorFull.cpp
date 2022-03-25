@@ -55,7 +55,6 @@ void compute(){
 		}
 	}
    }
-   
    for(int i=0;i<=10;i++){
    	for(int j=1;j<=1000000;j++){
    		dp[i][j]=dp[i][j-1]+(Prime[j]==i);

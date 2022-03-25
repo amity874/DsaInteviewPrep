@@ -10,7 +10,6 @@ using namespace std;
 #define pb 				emplace_back
 #define vi              vector<ll>
 #define vs				vector<string>
-#define pii             pair<ll,ll>
 #define ump				unordered_map
 #define mp 				map
 #define pq_max          priority_queue<ll>
@@ -33,7 +32,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 	err(++it, args...);
 }
 //typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
-
+#define pii             pair<int,int>
 void file_i_o()
 {
     ios_base::sync_with_stdio(0); 
@@ -44,55 +43,81 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-ll cnt=0;
-vector<ll> g[100005];
-void dfs1(ll src,vector<bool> &visited,std::stack<ll> &st){
-	visited[src]=true;
-	for(auto &child:g[src]){
-		if(not visited[child]){
-			dfs1(child,visited,st);
+pii parent[505][505];
+pii Get(pii a){
+	return parent[a.first][a.second]=(parent[a.first][a.second]==a?a:Get(parent[a.first][a.second]));
+}
+void Union(pii a,pii b){
+	a=Get(a);
+	b=Get(b);
+	parent[a.first][a.second]=b;
+}
+vector<vector<int>> matrixRankTransform(vector<vector<int>>& arr){
+	int n=arr.size();
+	int m=arr[0].size();
+	for(int i=0;i<n;i++){
+		for(int j=0;j<m;j++){
+			parent[i][j]={i,j};
 		}
 	}
-	st.push(src);
-}
-void dfs2(ll src,vector<bool> visited){
-visited[src]=true;
-cnt++;
-for(auto &child :g[src]){
-	if(not visited[child]){
-		dfs2(child,visited);
-	}
-}
-}
-
-ll getMotherVertex(ll n){
-	std::stack<ll> st;
-	std::vector<bool> visited(n+1,false);
-	for(int i=1;i<=n;i++){
-		if(visited[i]==false){
-			dfs1(i,visited,st);
+	std::vector<std::vector<int>> ans(n,std::vector<int>(m));
+	//initially connecting the identical element because all these are in same component
+	for(int i=0;i<n;i++){
+		std::unordered_map<int,std::pair<int,int>> mp;
+		for(int j=0;j<m;j++){
+			if(mp.count(arr[i][j])){
+				Union(mp[arr[i][j]],{i,j});
+			}
+			mp[arr[i][j]]={i,j};
 		}
 	}
-	int ans=st.top();
-    loop(i,1,n){
-       visited[i]=false;
-   }
-	dfs2(ans,visited);
-	if(cnt==n){
-		return ans;
+	for(int j=0;j<m;j++){
+		std::unordered_map<int,std::pair<int,int>> mp;
+		for(int i=0;i<n;i++){
+			if(mp.count(arr[i][j])){
+				Union(mp[arr[i][j]],{i,j});
+			}
+			mp[arr[i][j]]={i,j};
+		}
 	}
-	return -1;
+	std::vector<pair<int,int>> g[n][m];
+	for(int i=0;i<n;i++){
+		for(int j=0;j<m;j++){
+			pii x=Get({i,j});
+			g[x.first][x.second].push_back({i,j});
+		}
+	}
+	std::map<int,std::vector<std::vector<pair<int,int>>>> mp;
+	for(int i=0;i<n;i++){
+		for(int j=0;j<m;j++){
+			if(g[i][j].size()){
+				mp[arr[i][j]].push_back({g[i][j]});
+			}
+		}
+	}
+	vector<int> row(n);
+	vector<int> col(m);
+	for(auto &i:mp){
+		for(auto &j:i.second){
+			int res=0;
+			for(auto &k:j){
+				int x=k.first;
+				int y=k.second;
+				res=std::max(res,1+max(row[x],col[y]));
+			}
+			for(auto &k:j){
+				int x=k.first;
+				int y=k.second;
+				ans[x][y]=res;
+				row[x]=std::max(row[x],res);
+				col[y]=std::max(col[y],res);
+			}
+		}
+	}
+	return ans;
 }
 int main(int argc, char const *argv[]) {
-// 	file_i_o();
-	ll n,m;
-	std::cin>>n>>m;
-	loop(i,0,m-1){
-		ll u,v;
-		std::cin>>u>>v;
-// 		log(u,v);
-		g[u].push_back(v);
-	}
-	std::cout<<getMotherVertex(n);
+	// file_i_o();
+
 	return 0;
 }

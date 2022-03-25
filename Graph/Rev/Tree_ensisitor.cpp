@@ -44,55 +44,53 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-ll cnt=0;
-vector<ll> g[100005];
-void dfs1(ll src,vector<bool> &visited,std::stack<ll> &st){
-	visited[src]=true;
-	for(auto &child:g[src]){
-		if(not visited[child]){
-			dfs1(child,visited,st);
-		}
-	}
-	st.push(src);
-}
-void dfs2(ll src,vector<bool> visited){
-visited[src]=true;
-cnt++;
-for(auto &child :g[src]){
-	if(not visited[child]){
-		dfs2(child,visited);
-	}
-}
-}
 
-ll getMotherVertex(ll n){
-	std::stack<ll> st;
-	std::vector<bool> visited(n+1,false);
-	for(int i=1;i<=n;i++){
-		if(visited[i]==false){
-			dfs1(i,visited,st);
+class TreeAncestor {
+	int up[100000][20];
+	int dept[100000];
+	void dfs(vector<int> g[],int src,int par,int d){
+		dept[src]=d;
+		up[src][0]=par;
+		for(int i=1;i<22;i++){
+			up[src][i]=up[up[src][i-1]][i-1];
+		}
+		for(auto &child:g[src]){
+			if(src!=par){
+				dfs(g,child,src,d+1);
+			}
 		}
 	}
-	int ans=st.top();
-    loop(i,1,n){
-       visited[i]=false;
-   }
-	dfs2(ans,visited);
-	if(cnt==n){
+	int getParent(int a,int k){
+		int ans=a;
+		for(int i=1;i<21;i++){
+			if((1<<i)&k){
+				ans=up[ans][i];
+			}
+		}
 		return ans;
 	}
-	return -1;
+public:
+TreeAncestor(int n, vector<int>& parent) {
+   memset(up,-1,sizeof(up));
+   vector<int> g[n];
+   for(int i=0;i<parent.size();i++){
+   	if(i!=0){
+   		g[parent[i]].push_back(i);
+   		g[i].push_back(parent[i]);
+   	}
+   }
+   dfs(g,0,-1,0);     
 }
-int main(int argc, char const *argv[]) {
-// 	file_i_o();
-	ll n,m;
-	std::cin>>n>>m;
-	loop(i,0,m-1){
-		ll u,v;
-		std::cin>>u>>v;
-// 		log(u,v);
-		g[u].push_back(v);
+int getKthAncestor(int node, int k) {
+	if(k>dept[node]){
+		return -1;
 	}
-	std::cout<<getMotherVertex(n);
+	else{
+		return getParent(node,k);
+	}
+}
+};
+int main(int argc, char const *argv[]) {
+	file_i_o();
 	return 0;
 }

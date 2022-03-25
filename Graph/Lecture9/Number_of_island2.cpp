@@ -44,55 +44,62 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-ll cnt=0;
-vector<ll> g[100005];
-void dfs1(ll src,vector<bool> &visited,std::stack<ll> &st){
-	visited[src]=true;
-	for(auto &child:g[src]){
-		if(not visited[child]){
-			dfs1(child,visited,st);
-		}
-	}
-	st.push(src);
+  int Get(int a,std::vector<int> &parent){
+	return parent[a]=(parent[a]==a?a:Get(parent[a],parent));
 }
-void dfs2(ll src,vector<bool> visited){
-visited[src]=true;
-cnt++;
-for(auto &child :g[src]){
-	if(not visited[child]){
-		dfs2(child,visited);
-	}
-}
-}
-
-ll getMotherVertex(ll n){
-	std::stack<ll> st;
-	std::vector<bool> visited(n+1,false);
-	for(int i=1;i<=n;i++){
-		if(visited[i]==false){
-			dfs1(i,visited,st);
-		}
-	}
-	int ans=st.top();
-    loop(i,1,n){
-       visited[i]=false;
-   }
-	dfs2(ans,visited);
-	if(cnt==n){
-		return ans;
-	}
-	return -1;
-}
+int xdir[4]={-1,1,0,0};
+int ydir[4]={0,0,-1,1};
 int main(int argc, char const *argv[]) {
-// 	file_i_o();
-	ll n,m;
-	std::cin>>n>>m;
-	loop(i,0,m-1){
-		ll u,v;
-		std::cin>>u>>v;
-// 		log(u,v);
-		g[u].push_back(v);
+	// file_i_o();
+	int n,m,k;
+	int cnt=0;
+	std::cin>>n>>m>>k;
+	vector<vector<int>> arr(k,vector<int>(2));
+	vector<int> ans;
+	loop(i,0,k-1){
+		loop(j,0,1){
+			std::cin>>arr[i][j];
+		}
 	}
-	std::cout<<getMotherVertex(n);
+	vector<int> par(n*m,-1);
+	vector<int> rank(n*m,1);
+	for(int i=0;i<arr.size();i++){
+		int row=arr[i][0];
+		int col=arr[i][1];
+		int pos1=row*m+col;
+		if(par[pos1]!=-1){
+			ans.push_back(cnt);
+			continue;
+		}
+		par[pos1]=pos1;
+		cnt++;
+		for(int i=0;i<4;i++){
+			int x=row+xdir[i];
+			int y=col+ydir[i];
+			int pos2=x*m+y;
+			if(x<0 or y<0 or x>=n or y>=m or par[pos2]==-1){
+				continue;
+			}
+			int a=Get(pos1,par);
+			int b=Get(pos2,par);
+			if(a!=b){
+				if(rank[a]==rank[b]){
+					rank[a]++;
+				}
+				if(rank[a]>rank[b]){
+					par[b]=a;
+				}
+				else{
+					par[a]=b;
+				}
+				cnt--;
+			}
+		}
+		ans.push_back(cnt);
+	}
+	loop(i,0,ans.size()-1){
+		std::cout<<"["<<ans[i]<<",";
+	}
+	std::cout<<"]";
 	return 0;
 }

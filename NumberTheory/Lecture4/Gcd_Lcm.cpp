@@ -44,55 +44,24 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-ll cnt=0;
-vector<ll> g[100005];
-void dfs1(ll src,vector<bool> &visited,std::stack<ll> &st){
-	visited[src]=true;
-	for(auto &child:g[src]){
-		if(not visited[child]){
-			dfs1(child,visited,st);
-		}
+ll gcd__(ll a,ll b){
+	if(b==0){
+		return a;
 	}
-	st.push(src);
+	return gcd__(b,a%b);
 }
-void dfs2(ll src,vector<bool> visited){
-visited[src]=true;
-cnt++;
-for(auto &child :g[src]){
-	if(not visited[child]){
-		dfs2(child,visited);
-	}
-}
-}
-
-ll getMotherVertex(ll n){
-	std::stack<ll> st;
-	std::vector<bool> visited(n+1,false);
-	for(int i=1;i<=n;i++){
-		if(visited[i]==false){
-			dfs1(i,visited,st);
-		}
-	}
-	int ans=st.top();
-    loop(i,1,n){
-       visited[i]=false;
-   }
-	dfs2(ans,visited);
-	if(cnt==n){
-		return ans;
-	}
-	return -1;
+ll lcm(ll a,ll b){
+	ll g=gcd(a,b);
+	return (a*b)/g;
 }
 int main(int argc, char const *argv[]) {
-// 	file_i_o();
-	ll n,m;
-	std::cin>>n>>m;
-	loop(i,0,m-1){
-		ll u,v;
-		std::cin>>u>>v;
-// 		log(u,v);
-		g[u].push_back(v);
+	file_i_o();
+	ll t;
+	std::cin>>t;
+	while(t--){
+		ll a,b;
+		std::cin>>a>>b;
+		std::cout<<lcm(a,b)<<"\n";
 	}
-	std::cout<<getMotherVertex(n);
 	return 0;
 }

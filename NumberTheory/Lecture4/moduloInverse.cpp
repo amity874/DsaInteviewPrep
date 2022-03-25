@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 //#include<ext/pb_ds/assoc_container.hpp>
 //#include<ext/pb_ds/tree_policy.hpp>
@@ -19,7 +18,6 @@
 #define pq_max          std::priority_queue<ll>
 #define pq_min          std::priority_queue<ll,vi,std::greater<ll> >
 #define all(n) 			n.begin(),n.end()
-#define us              std::unordered_set
 #define ff 				first
 #define ss 				second
 #define mid(l,r)        (l+(r-l)/2)
@@ -32,64 +30,63 @@
 template <typename T> T gcd(T a, T b){if(a%b) return gcd(b,a%b);return b;}
 template <typename T> T lcm(T a, T b){return (a*(b/gcd(a,b)));}
 vs tokenizer(std::string str,char ch) {std::istringstream var((str)); vs v; std::string t; while(std::getline((var), t, (ch))) {v.pb(t);} return v;}
-std::vector<std::list<int>>g;
-std::vector<std::list<int>>gt;//graph transpose
-void dfs1(int i,us<int>&visited,std::stack<int>&st){
-    visited.insert(i);
-    for(auto &neighbour:g[i]){
-        if(not visited.count(neighbour)){
-            dfs1(neighbour,visited,st);
-        }
-    }
-    st.push(i);
+
+
+void err(std::istream_iterator<std::string> it) {}
+template<typename T, typename... Args>
+void err(std::istream_iterator<std::string> it, T a, Args... args) {
+    std::cout << *it << " = " << a << std::endl;
+    err(++it, args...);
 }
-void dfs2(int i,us<int>&visited,us<int>&temp){
-    visited.insert(i);
-    temp.insert(i);
-    for(auto &neighbour:gt[i]){
-        if(not visited.count(neighbour)){
-            dfs2(neighbour,visited,temp);
-        }
-    }
-}
-std::vector<us<int>> getSCC(int n,int e){
-    std::stack<int>st;
-    us<int> visited;
-    for(int i=0;i<n;i++){
-        if(not visited.count(i)){
-            dfs1(i,visited,st);
-        }
-    }
-    visited.clear();
-    std::vector<us<int>> result;
-    while(not st.empty()){
-        int res=st.top();
-        st.pop();
-        if( visited.count(res))continue;
-        us<int>temp;
-        dfs2(res,visited,temp);
-        result.emplace_back(temp);
-    }
-    return result;
-}
-int main(int argc, char const *argv[])
+//typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
+//typedef trie<std::string,null_type,trie_string_access_traits<>,pat_trie_tag,trie_prefix_search_node_update> pbtrie;
+
+void file_i_o()
 {
-    int v,e;
-    std::cin>>v>>e;
-    g.resize(v,std::list<int>());
-    gt.resize(v,std::list<int>());
-    for(int i=0;i<e;i++){
-        int u,v;
-        std::cin>>u>>v;
-        g[u].push_back(v);
-        gt[v].push_back(u);
+    std::ios_base::sync_with_stdio(0); 
+    std::cin.tie(0); 
+    std::cout.tie(0);
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+}
+
+struct data {
+    ll gcd;
+    ll x;
+    ll y;
+};
+
+data gcd_Extended(ll a, ll b) {
+    if(b == 0) {
+        data res;
+        res.gcd = a;
+        res.y = 0;
+        res.x = 1;
+        return res;
     }
-    std::vector<us<int>> res=getSCC(v,e);
-    for(auto&s:res){
-        for(auto&el:s){
-            std::cout<<el<<" , ";
-        }
-        std::cout<<"\n";
-    }
-return 0;
+    data res = gcd_Extended(b, a%b);
+    data ans;
+    ans.gcd = res.gcd;
+    ans.x = res.y;
+    ans.y = (res.x - (a/b)*(res.y));
+    return ans;
+}
+
+int modInv(int a, int m) {
+    struct data ans = gcd_Extended(a, m);
+    std::cout<<ans.x<<"\n";
+}
+
+int main(int argc, char const *argv[]) {
+    clock_t begin = clock();
+    file_i_o();
+    // Write your code here....
+
+    #ifndef ONLINE_JUDGE 
+      clock_t end = clock();
+      std::cout<<"\n\nExecuted In: "<<double(end - begin) / CLOCKS_PER_SEC*1000<<" ms";
+    #endif 
+    return 0;
 }

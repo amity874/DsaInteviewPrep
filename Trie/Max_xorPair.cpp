@@ -74,7 +74,6 @@ void insert(int n, TrieNode *root) {
 		}
 	}
 }
-
 int findMaxXorPair(TrieNode *root, vector<int> &arr) {
 	int ans = INT_MIN;
 	insert(arr[0], root);

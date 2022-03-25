@@ -44,55 +44,69 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-ll cnt=0;
-vector<ll> g[100005];
-void dfs1(ll src,vector<bool> &visited,std::stack<ll> &st){
-	visited[src]=true;
-	for(auto &child:g[src]){
-		if(not visited[child]){
-			dfs1(child,visited,st);
-		}
-	}
-	st.push(src);
+std::unordered_map<std::string,int> Rank;
+std::unordered_map<std::string,std::string> parent;
+std::string Get(std::string &str){
+if(!parent.count(str)){
+	parent[str]=str;
+	Rank[str]=1;
 }
-void dfs2(ll src,vector<bool> visited){
-visited[src]=true;
-cnt++;
-for(auto &child :g[src]){
-	if(not visited[child]){
-		dfs2(child,visited);
+if(parent.count(str)){
+	return str;
+}
+std::string ans=Get(parent[str]);
+parent[str]=ans;
+return ans;
+}
+void Union(std::string &s1,std::string &s2){
+	s1=Get(s1);
+	s2=Get(s2);
+	if(Rank[s1]==Rank[s2]){
+		Rank[s1]++;
+	}
+	if(Rank[s1]>Rank[s2]){
+		parent[s2]=s1;
+	}
+	else if(Rank[s1]>Rank[s2]){
+		parent[s1]=s2;
 	}
 }
+bool find_Similiraty(vector<string> &s1,vector<string> &s2,std::vector<std::pair<std::string,std::string>> &Pair){
+int n=s1.size();
+int m=s2.size();
+if(n!=m){
+	return false;
+}	
+for(auto &it:Pair){
+	Union(it.first,it.second);
 }
-
-ll getMotherVertex(ll n){
-	std::stack<ll> st;
-	std::vector<bool> visited(n+1,false);
-	for(int i=1;i<=n;i++){
-		if(visited[i]==false){
-			dfs1(i,visited,st);
-		}
+for(int i=0;i<s1.size();i++){
+	std::string w1=s1[i];
+	std::string w2=s2[i];
+	if(w1!=w2 && Get(w1)!=Get(w2)){
+		return false;
 	}
-	int ans=st.top();
-    loop(i,1,n){
-       visited[i]=false;
-   }
-	dfs2(ans,visited);
-	if(cnt==n){
-		return ans;
-	}
-	return -1;
+}
+return true;
 }
 int main(int argc, char const *argv[]) {
-// 	file_i_o();
-	ll n,m;
-	std::cin>>n>>m;
-	loop(i,0,m-1){
-		ll u,v;
-		std::cin>>u>>v;
-// 		log(u,v);
-		g[u].push_back(v);
+	// file_i_o();
+	int n;
+	std::cin>>n;
+	std::vector<std::string> sentence1(n);
+	std::vector<std::string> sentence2(n);
+	for(int i=0;i<n;i++){
+		std::cin>>sentence1[i];
 	}
-	std::cout<<getMotherVertex(n);
+	for(int i=0;i<n;i++){
+		std::cin>>sentence2[i];
+	}
+	std::vector<std::pair<std::string,std::string>> Pair;
+	int m;
+	std::cin>>m;
+	for(int i=0;i<m;i++){
+		std::cin>>Pair[i].first>>Pair[i].second;
+	}
+	std::cout<<find_Similiraty(sentence1,sentence2,Pair);
 	return 0;
 }

@@ -44,55 +44,67 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-ll cnt=0;
-vector<ll> g[100005];
-void dfs1(ll src,vector<bool> &visited,std::stack<ll> &st){
-	visited[src]=true;
-	for(auto &child:g[src]){
-		if(not visited[child]){
-			dfs1(child,visited,st);
+vector<ll> g[1005];
+vector<bool> ap(1005,false);
+vector<bool> visited(1005,false);
+vector<ll> parent(1005);
+vector<ll> low(1005,INT_MAX);
+vector<ll> disc(1005,INT_MAX);//represent discovery time of a node
+int timer=0;
+void getAp(ll node){
+	disc[node]=timer;
+	low[node]=timer;
+	timer++;
+	int cnt=0;
+	visited[node]=true;
+	vector<ll> nbr=g[node];
+	for(int i=0;i<nbr.size();i++){
+		ll v=nbr[i];
+		if(parent[node]==v){
+			continue;
+		}
+		else if(visited[v]==true){
+			low[node]=std::min(low[node],disc[v]);
+		}
+		else{
+			parent[v]=node;
+		    cnt++;
+			getAp(v);
+			low[node]=std::min(low[node],low[v]);
+			if(parent[node]==-1){
+				if(cnt>=2){
+					ap[node]=true;
+				}
+			}
+			else{
+				if(low[v]>=disc[node]){
+					ap[node]=true;
+				}
+			}
 		}
 	}
-	st.push(src);
-}
-void dfs2(ll src,vector<bool> visited){
-visited[src]=true;
-cnt++;
-for(auto &child :g[src]){
-	if(not visited[child]){
-		dfs2(child,visited);
-	}
-}
-}
-
-ll getMotherVertex(ll n){
-	std::stack<ll> st;
-	std::vector<bool> visited(n+1,false);
-	for(int i=1;i<=n;i++){
-		if(visited[i]==false){
-			dfs1(i,visited,st);
-		}
-	}
-	int ans=st.top();
-    loop(i,1,n){
-       visited[i]=false;
-   }
-	dfs2(ans,visited);
-	if(cnt==n){
-		return ans;
-	}
-	return -1;
 }
 int main(int argc, char const *argv[]) {
-// 	file_i_o();
-	ll n,m;
-	std::cin>>n>>m;
-	loop(i,0,m-1){
+	// file_i_o();
+	parent[0]=-1;
+	int n,e;
+	std::cin>>n>>e;
+	loop(i,1,e){
 		ll u,v;
 		std::cin>>u>>v;
-// 		log(u,v);
+		u--;
+		v--;
 		g[u].push_back(v);
+		g[v].push_back(u); 
 	}
-	std::cout<<getMotherVertex(n);
+	getAp(0);
+	int ans=0;
+	loop(i,0,n-1){
+		if(ap[i]==true){
+			ans++;
+		}
+	}
+// 	logarr(ap,0,n-1);
+	std::cout<<ans<<"\n";
 	return 0;
 }
