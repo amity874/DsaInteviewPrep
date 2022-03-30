@@ -39,112 +39,89 @@ void err(std::istream_iterator<std::string> it, T a, Args... args) {
 }
 //typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
 //typedef trie<std::string,null_type,trie_string_access_traits<>,pat_trie_tag,trie_prefix_search_node_update> pbtrie;
+
 void file_i_o()
 {
     std::ios_base::sync_with_stdio(0); 
     std::cin.tie(0); 
     std::cout.tie(0);
-    // #ifndef ONLINE_JUDGE
-    //     freopen("input.txt", "r", stdin);
-    //     freopen("output.txt", "w", stdout);
-    // #endif
 }
-vi arr; // storing the elements
+vi arr; // storing the elemtns
 vi tree; // array fo segtree
-vi lazy; // for lazy storage
-ll query(int nl, int nr, int ti, int l, int r) {
-   if(lazy[ti] != 0) {
-        // you have a loan
-        tree[ti] += lazy[ti];
-        if(nl != nr) {
-            lazy[2*ti+1] += lazy[ti];
-            lazy[2*ti+2] += lazy[ti];
-        }
-        lazy[ti] = 0;
-    }
-    if(l > nr or r < nl) {
-        return INT_MAX;
+vi lazy;
+void push(int v){
+tree[2*v]+=lazy[v];
+tree[v*2+1]+=lazy[v];
+lazy[2*v]+=lazy[v];
+lazy[v*2+1]+=lazy[v];
+lazy[v]=0;
+}
+ll sum(int nl, int nr, int ti, int l, int r) {
+    if(r < nl or l > nr) {
+        return 0;
     }
     if(l <= nl and r >= nr) {
         return tree[ti];
     }
+    push(ti);
     int m = nl + (nr-nl)/2;
-    ll left = query(nl, m, 2*ti+1, l, r);
-    ll right = query(m+1, nr, 2*ti+2, l, r);
-    return std::min(left, right);
+    ll ans1 = sum(nl, m, 2*ti, l, r);
+    ll ans2 = sum(m+1, nr, 2*ti+1, l, r);
+    return ans1+ans2;
 }
-
-void update(int nl, int nr, int ti, int l, int r, int val) {
-    if(lazy[ti] != 0) {
-        tree[ti] += lazy[ti];
-        if(nl != nr) {
-            lazy[2*ti+1] += lazy[ti];
-            lazy[2*ti+2] += lazy[ti];
-        }
-        lazy[ti] = 0;
+void update(int nl, int nr, int l,int r,int ti,int val) {
+	if(l>r){
+		return;
+	}
+    if(l==nl && r== nr) {
+        tree[ti]+=val;
+        lazy[ti]+=val;
     }
-    if(l > nr or r < nl) {
-        return;
+    else{
+    	push(ti);
+    	int m = nl + (nr-nl)/2;
+        update(m + 1, nr,std::max(l,m+1),r, 2*ti+1,val);
+        update(nl, m,l,std::min(r,m),2*ti,val);
+        tree[ti] = tree[2*ti] + tree[2*ti+1];
     }
-    if(l <= nl and r >= nr) {
-        // complete overlap
-        tree[ti] += val;
-        if(nl != nr) {
-            lazy[2*ti+1] += val;
-            lazy[2*ti+2] += val;
-        }
-        return;
-    }
-    int m = nl + (nr-nl)/2;
-    update(nl, m, 2*ti+1, l, r, val);
-    update(m+1, r, 2*ti+2, l, r, val);
-    tree[ti] = std::min(tree[2*ti+1], tree[2*ti+2]);
 }
-
 void buildTree(int nl, int nr, int ti) { // ti -> segment tree index
     if(nl == nr) {
         tree[ti] = arr[nl];
         return;
     }
     int m = nl + (nr-nl)/2;
-    buildTree(nl, m, 2*ti+1);
-    buildTree(m+1, nr, 2*ti+2);
-    tree[ti] = std::min(tree[2*ti+1], tree[2*ti+2]);
+    buildTree(nl, m, 2*ti);
+    buildTree(m+1, nr, 2*ti+1);
+    tree[ti] = tree[2*ti+1] + tree[2*ti];
 }
-
-
 int main(int argc, char const *argv[]) {
-    clock_t begin = clock();
-    file_i_o();
+    // clock_t begin = clock();
+    // file_i_o();
     // Write your code here....
-    int n;
-    std::cin>>n;
+    ll n,q;
+    std::cin>>n>>q;
     arr.resize(n);
     tree.resize(4*n, 0);
-    lazy.resize(4*n, 0);
+    lazy.resize(4*n,0);
     loop(i, 0, n-1) std::cin>>arr[i];
-    buildTree(0, n-1, 0);
-    int q;
-    std::cin>>q;
-    while(q--) {
-        int type;
-        std::cin>>type;
-        if(type == 0) {
-            // update
-            int l, r, val;
-            std::cin>>l>>r>>val;
-            update(0, n-1, 0, l, r, val);
-        } else {
-            int l, r;
-            std::cin>>l>>r;
-            std::cout<<query(0, n-1, 0, l, r)<<"\n";
-        }
-        
+    buildTree(0, n-1, 1);
+    while(q--){
+    	int type;
+    	std::cin>>type;
+    	if(type==1){
+    		ll a,b,u;
+    		std::cin>>a>>b>>u;
+    		a--;
+    		b--;
+    		update(0,n-1,a,b,1,u);
+    	}
+    	else{
+    		ll k;
+    		std::cin>>k;
+    		k--;
+    		std::cout<<sum(0,n-1,1,k,k)<<"\n";
+    	}
     }
-
-    #ifndef ONLINE_JUDGE 
-      clock_t end = clock();
-      std::cout<<"\n\nExecuted In: "<<double(end - begin) / CLOCKS_PER_SEC*1000<<" ms";
-    #endif 
     return 0;
 }

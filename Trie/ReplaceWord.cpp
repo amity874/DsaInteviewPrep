@@ -44,52 +44,85 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-
-class TreeAncestor {
-	int up[100005][22];
-	int dept[100005];
-	void dfs(vector<int> g[],int src,int par,int d){
-		dept[src]=d;
-		up[src][0]=par;
-		for(int i=1;i<=22;i++){
-			up[src][i]=up[up[src][i-1]][i-1];
-		}
-		for(auto &child:g[src]){
-			if(src!=par){
-				dfs(g,child,src,d+1);
-			}
-		}
+struct Node{
+	Node *link[26];
+	bool Isterminal=false;
+	bool containsKey(char ch){
+		return link[ch-'a']!=NULL;
 	}
-	int getParent(int a,int k){
-		int ans=a;
-		for(int i=1;i<21;i++){
-			if((1<<i)&k){
-				ans=up[ans][i];
-			}
-		}
-		return ans;
+	Node * get(char ch){
+		return link[ch-'a'];
 	}
-public:
-TreeAncestor(int n, vector<int>& parent) {
-   memset(up,-1,sizeof(up));
-   vector<int> g[n];
-   for(int i=0;i<parent.size();i++){
-   	if(i!=0){
-   		g[parent[i]].push_back(i);
-   		g[i].push_back(parent[i]);
-   	}
-   }
-   dfs(g,0,-1,0);     
-}
-int getKthAncestor(int node, int k) {
-	if(k>dept[node]){
-		return -1;
+	void put(char ch,Node *root){
+		link[ch-'a']=root;
 	}
-	else{
-		return getParent(node,k);
+	bool isEnd(){
+		return this->Isterminal;
 	}
-}
+	void setEnd(){
+		this->Isterminal=true;
+	}
 };
+class Trie{
+private:
+	Node *root;
+public:
+	Trie(){
+		root=new Node();
+	}
+	void insert(std::string &str){
+		Node *temp=root;
+		int n=str.size();
+		for(int i=0;i<n;i++){
+			char ch=str[i];
+			if(!temp->containsKey(ch)){
+				temp->put(ch,new Node());
+			}
+			temp=temp->get(ch);
+		}
+		temp->setEnd();
+	}
+	std::string prefix(std::string &word){
+		Node *temp=root;
+		int n=word.size();
+		std::string ans;
+		for(int i=0;i<n;i++){
+			char ch=word[i];
+			if(!temp->containsKey(ch)){
+				break;
+			}
+			else{
+			ans.push_back(ch);
+			temp=temp->get(ch);
+			if(temp->isEnd()){
+				return ans;
+			}
+		}
+	}
+	return word;
+	}
+};
+string replaceWords(vector<string>& dictionary, string sentence) {
+	Trie tr;
+	for(auto &str:dictionary){
+		tr.insert(str);
+	}
+	std::string ans="";
+	std::string pre;
+	int n=sentence.size();
+	for(int i=0;i<n;i++){
+		if(sentence[i]==' '){
+			ans+=tr.prefix(pre);
+			pre="";
+			ans+=" ";
+		}
+		else{
+			pre+=sentence[i];
+		}
+	}
+	ans+=tr.prefix(pre);
+	return ans;
+}
 int main(int argc, char const *argv[]) {
 	file_i_o();
 	return 0;

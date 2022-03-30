@@ -45,52 +45,20 @@ void file_i_o()
 	#endif
 }
 
-class TreeAncestor {
-	int up[100005][22];
-	int dept[100005];
-	void dfs(vector<int> g[],int src,int par,int d){
-		dept[src]=d;
-		up[src][0]=par;
-		for(int i=1;i<=22;i++){
-			up[src][i]=up[up[src][i-1]][i-1];
-		}
-		for(auto &child:g[src]){
-			if(src!=par){
-				dfs(g,child,src,d+1);
-			}
-		}
-	}
-	int getParent(int a,int k){
-		int ans=a;
-		for(int i=1;i<21;i++){
-			if((1<<i)&k){
-				ans=up[ans][i];
-			}
-		}
-		return ans;
-	}
-public:
-TreeAncestor(int n, vector<int>& parent) {
-   memset(up,-1,sizeof(up));
-   vector<int> g[n];
-   for(int i=0;i<parent.size();i++){
-   	if(i!=0){
-   		g[parent[i]].push_back(i);
-   		g[i].push_back(parent[i]);
-   	}
-   }
-   dfs(g,0,-1,0);     
-}
-int getKthAncestor(int node, int k) {
-	if(k>dept[node]){
-		return -1;
-	}
-	else{
-		return getParent(node,k);
-	}
-}
-};
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	ll n,q;
+	std::cin>>n>>q;
+	std::vector<ll> arr(n+5);
+	std::vector<ll> pre(n+5);
+	loop(i,1,n){
+		std::cin>>arr[i];
+		pre[i]=pre[i-1]^arr[i];
+	}
+	while(q--){
+		ll a,b;
+		std::cin>>a>>b;
+		std::cout<<(pre[b]^pre[a-1])<<"\n";
+	}
 	return 0;
 }

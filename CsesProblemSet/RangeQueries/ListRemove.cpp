@@ -1,6 +1,6 @@
 #include<bits/stdc++.h>
-//#include<ext/pb_ds/assoc_container.hpp>
-//using namespace __gnu_pbds;
+#include<ext/pb_ds/assoc_container.hpp>
+using namespace __gnu_pbds;
 using namespace std;
 #define ll 				long long int
 #define ld				long double
@@ -33,7 +33,7 @@ void err(istream_iterator<string> it, T a, Args... args) {
 	err(++it, args...);
 }
 //typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
-
+#define ordered_set tree<array<int,2>, null_type,less<array<int,2>>, rb_tree_tag,tree_order_statistics_node_update>
 void file_i_o()
 {
     ios_base::sync_with_stdio(0); 
@@ -45,52 +45,23 @@ void file_i_o()
 	#endif
 }
 
-class TreeAncestor {
-	int up[100005][22];
-	int dept[100005];
-	void dfs(vector<int> g[],int src,int par,int d){
-		dept[src]=d;
-		up[src][0]=par;
-		for(int i=1;i<=22;i++){
-			up[src][i]=up[up[src][i-1]][i-1];
-		}
-		for(auto &child:g[src]){
-			if(src!=par){
-				dfs(g,child,src,d+1);
-			}
-		}
-	}
-	int getParent(int a,int k){
-		int ans=a;
-		for(int i=1;i<21;i++){
-			if((1<<i)&k){
-				ans=up[ans][i];
-			}
-		}
-		return ans;
-	}
-public:
-TreeAncestor(int n, vector<int>& parent) {
-   memset(up,-1,sizeof(up));
-   vector<int> g[n];
-   for(int i=0;i<parent.size();i++){
-   	if(i!=0){
-   		g[parent[i]].push_back(i);
-   		g[i].push_back(parent[i]);
-   	}
-   }
-   dfs(g,0,-1,0);     
-}
-int getKthAncestor(int node, int k) {
-	if(k>dept[node]){
-		return -1;
-	}
-	else{
-		return getParent(node,k);
-	}
-}
-};
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	ll n;
+	std::cin>>n;
+	ordered_set os;
+	loop(i,1,n){
+	    int x;
+	    std::cin>>x;
+		os.insert({i,x});
+	}
+	while(n--){
+		ll x;
+		std::cin>>x;
+		auto val=*os.find_by_order(x-1);
+		std::cout<<(val[1])<<" ";
+		os.erase(val);
+	}
+	cout<<"\n";
 	return 0;
 }

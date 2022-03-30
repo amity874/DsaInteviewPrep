@@ -1,127 +1,102 @@
-#include <bits/stdc++.h>
+#include<bits/stdc++.h>
 // https://www.hackerearth.com/practice/data-structures/advanced-data-structures/fenwick-binary-indexed-trees/practice-problems/algorithm/2-vs-3/
+//#include<ext/pb_ds/assoc_container.hpp>
+//using namespace __gnu_pbds;
 using namespace std;
-struct _ { ios_base::Init i; _() { cin.sync_with_stdio(0); cin.tie(0);cout.tie(0); } } _;
+#define ll                 long long int
+#define ld                long double
+#define mod             1000000007
+#define inf             1e18
+#define endl            "\n"
+#define pb                 emplace_back
+#define vi              vector<ll>
+#define vs                vector<string>
+#define pii             pair<ll,ll>
+#define ump                unordered_map
+#define mp                 map
+#define pq_max          priority_queue<ll>
+#define pq_min          priority_queue<ll,vi,greater<ll> >
+#define ff                 first
+#define ss                 second
+#define mid(l,r)        (l+(r-l)/2)
+#define loop(i,a,b)     for(int i=(a);i<=(b);i++)
+#define looprev(i,a,b)     for(int i=(a);i>=(b);i--)
+#define log(args...)     { string _s = #args; replace(_s.begin(), _s.end(), ',', ' '); stringstream _ss(_s); istream_iterator<string> _it(_ss); err(_it, args); }
+#define logarr(arr,a,b)    for(int z=(a);z<=(b);z++) cout<<(arr[z])<<" ";cout<<endl;    
+#define token(str,ch)    (std::istringstream var((str)); vs v; string t; while(getline((var), t, (ch))) {v.pb(t);} return v;)
+vs tokenizer(string str,char ch) {std::istringstream var((str)); vs v; string t; while(getline((var), t, (ch))) {v.pb(t);} return v;}
 
-#define READ(FILE) freopen(FILE,"r",stdin)
-#define WRITE(FILE) freopen(FILE,"w",stdout)
 
-#define ict int t;cin>>t;while(t--)
-#define lct long long int t;cin>>t;while(t--)
-#define in(a) int a; cin>>a;
-#define llin(a) ll a; cin>>a;
-
-#define srep(i,a,b) for(ll i=a;i<b;i++)
-#define rep(i,n) for(ll i=0;i<n;i++)
-
-#define pb push_back
-
-typedef long long int ll; // [9,223,372,036,854,775,807 to -9.....808]
-typedef vector<int> vi;
-typedef vector<ll> vl;
-typedef vector<string> vs;
-typedef pair<int, int> pii;
-typedef pair<ll,ll> pll;
-typedef set<int> si;
-typedef set<ll> sl;
-typedef map<string, ll> mapsl;
-typedef map<string, int> mapsi;
-typedef map<int,int> mapii;
-typedef map<ll, ll> mapll;
-
-ll tree[300000];
-ll arr[100005];
-ll p[100005];
-
-void fastpow()
-{
-    p[0]=1;
-    for(int i=1;i<=100000;++i)
-        p[i]=(p[i-1]*2)%3;
+void err(istream_iterator<string> it) {}
+template<typename T, typename... Args>
+void err(istream_iterator<string> it, T a, Args... args) {
+    cout << *it << " = " << a << endl;
+    err(++it, args...);
 }
+//typedef tree<ll, null_type, less<ll>, rb_tree_tag, tree_order_statistics_node_update> pbds;
 
-void build(ll i, ll st, ll en)
+void file_i_o()
 {
-    if(st == en)
-    {
-        tree[i] = arr[st];
-    }
-    else
-    {
-        ll mid = (st + en) / 2;
-        build(2*i, st, mid);
-        build(2*i+1, mid+1, en);
-        tree[i] = (tree[2*i]*p[en-mid] + tree[2*i+1])%3;
+    ios_base::sync_with_stdio(0); 
+    cin.tie(0); 
+    cout.tie(0);
+    #ifndef ONLINE_JUDGE
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+    #endif
+}
+ll n;
+const ll maxN=2e5+5;
+ll tree[4*maxN],arr[maxN];
+ll poW[maxN];
+void calcPow(){
+    poW[0]=1;
+    for(int i=1;i<100000;i++){
+        poW[i]=(poW[i-1]*2)%3;
     }
 }
-
-void update(ll i, ll st, ll en, ll idx)
-{
-    if(st == en)
-    {
-        tree[i] = 1;
-        arr[idx] = 1;
+void build(ll tidx=1,ll l=0,ll r=n-1){
+    if(l==r){
+        tree[tidx]=arr[l];
+        return;
     }
-    else
-    {
-        ll mid = (st + en) / 2;
-        if(st <= idx and idx <= mid)
-        {
-            update(2*i, st, mid, idx);
+    else{
+    ll m=mid(l,r);
+    build(2*tidx,l,m);
+    build(2*tidx+1,m+1,r);
+    tree[tidx]=(tree[2*tidx]*poW[r-mid]+tree[2*tidx+1])%3;
+  }
+}
+void update(ll pos,ll val,ll nl=0,ll nr=n-1,ll tidx=1){
+    if(nl==nr){
+        tree[tidx]=val;
+        arr[pos]=val;
+    }
+    else{
+        ll m=mid(nl,nr);
+        if(m<=pos){
+            update(pos,val,nl,m,2*tidx);
         }
-        else
-        {
-            update(2*i+1, mid+1, en, idx);
+        else{
+            update(pos,val,m+1,nr,2*tidx+1);
         }
-        tree[i] = ((tree[2*i]*p[en-mid]%3) + tree[2*i+1])%3;
+        tree[tidx]=(tidx[2*tidx]*poW[nr-m]+tree[2*tidx+1])%mod;
     }
 }
-
-ll query(ll i, ll st, ll en, ll l, ll r)
-{
-    if(r < st or en < l)
-    {
+ll query(ll l,ll r,ll nl=0,ll nr=n-1){
+    if(r<nl or l> nr){
         return 0;
     }
-    if(l <= st and en <= r)
-    {
-        return (tree[i]*p[r-en])%3;
+    if(l<=nl && r>=nr){
+        return tree[2*tidx]*(poW[nr-r])%3;
     }
-    ll mid = (st + en) / 2;
-    ll p1 = query(2*i, st, mid, l, r);
-    ll p2 = query(2*i+1, mid+1, en, l, r);
-    return (p1 + p2)%3;
+    ll m=mid(nl,nr);
+    ll p=query(l,r,nl,m);
+    ll q=query(l,r,m+1,nr);
+    return (p1+p1)%3;
 }
-
-
-int main()
-{
-    llin(n);
-    string str;
-    cin>>str;
-    fastpow();
-    for(ll i=1;i<=n;i++)
-    {
-        arr[i]=str[i-1]-48;
-    }
-    build(1,1,n);
-    lct
-    {
-        llin(chk);
-        llin(l);
-        if(chk==0)
-        {
-            llin(r);
-            cout<<query(1,1,n,l+1,r+1)<<endl;
-        }
-        else
-        {
-            if(str[l]=='0')
-            {
-                str[l]='1';
-                arr[l+1]=1;
-                update(1,1,n,l+1);
-            }
-        }
-    }
+int main(int argc, char const *argv[]) {
+    file_i_o();
+    
+    return 0;
 }

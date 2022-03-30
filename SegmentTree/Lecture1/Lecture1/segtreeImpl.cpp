@@ -1,8 +1,8 @@
 #include<bits/stdc++.h>
-//#include<ext/pb_ds/assoc_container.hpp>
-//#include<ext/pb_ds/tree_policy.hpp>
+// #include<ext/pb_ds/assoc_container.hpp>
+// #include<ext/pb_ds/tree_policy.hpp>
 //#include <ext/pb_ds/trie_policy.hpp>
-//using namespace __gnu_pbds;
+// using namespace __gnu_pbds;
 #define ll 				long long int
 #define ld				long double
 #define mod             1000000007
@@ -28,7 +28,7 @@
 #define logarr(arr,a,b)	for(int z=(a);z<=(b);z++) std::cout<<(arr[z])<<" ";std::cout<<std::endl;	
 template <typename T> T gcd(T a, T b){if(a%b) return gcd(b,a%b);return b;}
 template <typename T> T lcm(T a, T b){return (a*(b/gcd(a,b)));}
-vs tokenizer(std::string str,char ch) {std::istringstream var((str)); vs v; std::string t; while(std::getline((var), t, (ch))) {v.pb(t);} return v;}
+// #define ordered_set tree<array<int,2>, null_type,less<array<int,2>>, rb_tree_tag,tree_order_statistics_node_update>
 
 
 void err(std::istream_iterator<std::string> it) {}

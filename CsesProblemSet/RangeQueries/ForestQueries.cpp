@@ -45,52 +45,45 @@ void file_i_o()
 	#endif
 }
 
-class TreeAncestor {
-	int up[100005][22];
-	int dept[100005];
-	void dfs(vector<int> g[],int src,int par,int d){
-		dept[src]=d;
-		up[src][0]=par;
-		for(int i=1;i<=22;i++){
-			up[src][i]=up[up[src][i-1]][i-1];
-		}
-		for(auto &child:g[src]){
-			if(src!=par){
-				dfs(g,child,src,d+1);
-			}
-		}
-	}
-	int getParent(int a,int k){
-		int ans=a;
-		for(int i=1;i<21;i++){
-			if((1<<i)&k){
-				ans=up[ans][i];
-			}
-		}
-		return ans;
-	}
-public:
-TreeAncestor(int n, vector<int>& parent) {
-   memset(up,-1,sizeof(up));
-   vector<int> g[n];
-   for(int i=0;i<parent.size();i++){
-   	if(i!=0){
-   		g[parent[i]].push_back(i);
-   		g[i].push_back(parent[i]);
-   	}
-   }
-   dfs(g,0,-1,0);     
-}
-int getKthAncestor(int node, int k) {
-	if(k>dept[node]){
-		return -1;
-	}
-	else{
-		return getParent(node,k);
-	}
-}
-};
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	int n,m;
+	std::cin>>n>>m;
+	int arr[n+1][n+1];
+	int prefix[n+1][n+1];
+	memset(prefix,0,sizeof(prefix));
+	memset(arr,0,sizeof(arr));
+	for(int i=1;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			char x;
+			std::cin>>x;
+			if(x=='*'){
+				arr[i][j]=1;
+			}
+			else{
+				arr[i][j]=0;
+			}
+			prefix[i][j]=arr[i][j]+prefix[i][j-1];//column wise sum
+		}
+	}
+	for(int i=1;i<=n;i++){
+		for(int j=1;j<=n;j++){
+			prefix[i][j]+=prefix[i-1][j];
+		}
+	}
+	// loop(i,1,n){
+	// 	loop(j,1,n){
+	// 		std::cout<<prefix[i][j]<<" ";
+	// 	}
+	// 	std::cout<<"\n";
+	// }
+	while(m--){
+		ll x1,y1,x2,y2;
+		std::cin>>x1>>y1>>x2>>y2;
+		std::cout<<(prefix[x2][y2]-
+			prefix[x2][y1-1]-
+			prefix[x1-1][y2]+
+			prefix[x1-1][y1-1])<<"\n";
+	}
 	return 0;
 }
