@@ -44,55 +44,112 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-string minWindow(string s, string t) {
-std::unordered_map<char,int> mp1;
-for(int i=0;i<t.size();i++){
-	mp1[t[i]]++;
-}
-int cnt=t.size();
-int mcnt=0;
-int n=s.size();
-std::unordered_map<char,int> mp2;  
-std::string o_ans;
-int i=0;
-int j=0;
-while(true){
-	bool f1=false;
-	bool f2=false;
-	while(i<s.size() && mcnt<cnt){
-		char ch=s[i];
-		mp2[ch]+=1;
-		if(mp2[ch]<=mp1[ch]){
-			mcnt+=1;
-		}
-		f1=true;
-		i++;
+void removeEle(std::unordered_map<char,int> &mp,char &ch){
+	if(mp[ch]==1){
+		mp.erase(ch);
 	}
-	while(j<i && mcnt==cnt){
-		string ans=s.substr(j,i-j);
-		if(o_ans.size()==0 || ans.size()<o_ans.size()){
-			o_ans=ans;
-		}
-		char ch=s[j];
-		if(mp2[ch]==1){
-			mp2.erase(ch);
-		}
-		else{
-			mp2[ch]-=1;
-		}
-		if(mp2[ch]<mp1[ch]){
-			mcnt-=1;
-		}
-		f2=true;
-		j++;
-	}
-	if(f1==false && f2==false){
-		break;
+	else{
+		mp[ch]--;
 	}
 }
-return o_ans;
+int getMx(std::string &str,int k){
+	if(k==1){
+		int ans=0;
+		int n=str.size();
+		std::unordered_map<char,int> mp;
+		int i=-1;
+		int j=-1;
+		while(true){
+			bool f1=false;
+			bool f2=false;
+			while(i<n-1){
+				i++;
+				f1=true;
+				char ch=str[i];
+				mp[ch]++;
+				if(mp.size()>1){
+				i--;
+				removeEle(mp,ch);
+				break;				
+				}
+			}
+			while(j<i){
+				f2=true;
+				if(mp.size()==1){
+					ans+=(i-j);
+				}
+				j++;
+				char ch=str[j];
+				removeEle(mp,ch);
+				if(mp.size()==0){
+					break;
+				}
+			}
+			if(f1==false && f2==false){
+				break;
+			}
+		}
+		return ans;
+	}
+	int n=str.size();
+	int ib=-1;
+	int is=-1;
+	int  j=-1;
+	int ans=0;
+	std::unordered_map<char,int> mp1;
+	std::unordered_map<char,int> mp2;
+	while(true){
+		bool f1=false;
+		bool f2=false;
+		bool f3=false;
+		while(ib<n-1){
+			ib++;
+			f1=true;
+			char ch=str[ib];
+			mp1[ch]++;
+			if(mp1.size()==k+1){
+				ib--;
+				removeEle(mp1,ch);
+				break;
+			}
+		}
+		while(is<ib){
+			is++;
+			f1=true;
+			char ch=str[is];
+			mp2[ch]++;
+			if(mp2.size()==k){
+				is--;
+				removeEle(mp2,ch);
+				break;
+			}
+		}
+		while(j<is){
+			if(mp1.size()==k && mp2.size()==k-1){
+				ans+=(ib-is);
+			}
+			f1=true;
+			j++;
+			char ch=str[j];
+			removeEle(mp1,ch);
+			removeEle(mp2,ch);
+			if(mp1.size()<k or mp2.size()<k-1){
+				break;
+			}
+		}
+		if(f1==false && f2== false && f3==false){
+			break;
+		}
+	}
+	return ans;
 }
+
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	std::string str;
+	std::cin>>str;
+	int k;
+	std::cin>>k;
+	std::cout<<getMx(str,k);
 	return 0;
 }

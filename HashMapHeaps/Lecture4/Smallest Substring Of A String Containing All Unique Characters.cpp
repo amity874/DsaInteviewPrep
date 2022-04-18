@@ -44,55 +44,48 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-string minWindow(string s, string t) {
-std::unordered_map<char,int> mp1;
-for(int i=0;i<t.size();i++){
-	mp1[t[i]]++;
-}
-int cnt=t.size();
-int mcnt=0;
-int n=s.size();
-std::unordered_map<char,int> mp2;  
-std::string o_ans;
-int i=0;
-int j=0;
-while(true){
-	bool f1=false;
-	bool f2=false;
-	while(i<s.size() && mcnt<cnt){
-		char ch=s[i];
-		mp2[ch]+=1;
-		if(mp2[ch]<=mp1[ch]){
-			mcnt+=1;
-		}
-		f1=true;
-		i++;
+int getMx(std::string &s){
+	int ans=INT_MAX;
+	int n=s.size()-1;
+	std::set<char> st;
+	for(int i=0;i<=n;i++){
+		st.insert(s[i]);
 	}
-	while(j<i && mcnt==cnt){
-		string ans=s.substr(j,i-j);
-		if(o_ans.size()==0 || ans.size()<o_ans.size()){
-			o_ans=ans;
+	int cnt=st.size();
+	int i=-1;
+	int j=-1;
+	std::unordered_map<char,int> mp;
+	while(true){
+		bool f1=false;
+		bool f2=false;
+		while(i<n && mp.size()<cnt){
+			i++;
+			char ch=s[i];
+			mp[ch]++;
+			f1=true;
 		}
-		char ch=s[j];
-		if(mp2[ch]==1){
-			mp2.erase(ch);
+		while(j<i && mp.size()==cnt){
+			ans=std::min(ans,(i-j));
+			j++;
+			char ch=s[j];
+			if(mp[ch]==1){
+				mp.erase(ch);
+			}
+			else{
+				mp[ch]--;
+			}
+			f2=true;
 		}
-		else{
-			mp2[ch]-=1;
+		if(f1==false && f2==false){
+			break;
 		}
-		if(mp2[ch]<mp1[ch]){
-			mcnt-=1;
-		}
-		f2=true;
-		j++;
 	}
-	if(f1==false && f2==false){
-		break;
-	}
-}
-return o_ans;
+	return ans;
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();
+	std::string s1;
+	std::cin>>s1;
+	cout<<getMx(s1);
 	return 0;
 }

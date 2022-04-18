@@ -44,53 +44,60 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-string minWindow(string s, string t) {
-std::unordered_map<char,int> mp1;
-for(int i=0;i<t.size();i++){
-	mp1[t[i]]++;
+template <typename T>
+struct TreeNode {
+  int data;
+  struct TreeNode * left, * right;
+};
+
+bool isLeaf(TreeNode * root) {
+  return !root -> left && !root -> right;
 }
-int cnt=t.size();
-int mcnt=0;
-int n=s.size();
-std::unordered_map<char,int> mp2;  
-std::string o_ans;
-int i=0;
-int j=0;
-while(true){
-	bool f1=false;
-	bool f2=false;
-	while(i<s.size() && mcnt<cnt){
-		char ch=s[i];
-		mp2[ch]+=1;
-		if(mp2[ch]<=mp1[ch]){
-			mcnt+=1;
-		}
-		f1=true;
-		i++;
-	}
-	while(j<i && mcnt==cnt){
-		string ans=s.substr(j,i-j);
-		if(o_ans.size()==0 || ans.size()<o_ans.size()){
-			o_ans=ans;
-		}
-		char ch=s[j];
-		if(mp2[ch]==1){
-			mp2.erase(ch);
-		}
-		else{
-			mp2[ch]-=1;
-		}
-		if(mp2[ch]<mp1[ch]){
-			mcnt-=1;
-		}
-		f2=true;
-		j++;
-	}
-	if(f1==false && f2==false){
-		break;
+bool isleaf(TreeNode *root){
+	return !(root->left && !root->right);
+}
+void addLeftBoundary(TreeNode *root,vector<int> &res){
+	TreeNode *curr=root->left;
+	while(curr){
+		if(!isleaf(curr)) res.push_back(curr->data);
+		if(curr->left)curr=curr->left;
+		else curr=curr->right;
 	}
 }
-return o_ans;
+void addrightBoundary(TreeNode *root,vector<int> &res){
+	TreeNode *curr=root->right;
+	vector<int> temp;
+	while(curr){
+		if(!isleaf(curr))temp.push_back(curr->data);
+		if(curr->right)curr=curr->right;
+		else curr=curr->left;
+	}
+	for(int i=temp.size()-1;i>=0;i--){
+		res.push_back(temp[i]);
+	}
+}
+void addLeafNode(TreeNode *root ,vector<int> &res){
+	if(isleaf(root)){
+		res.push_back(root->data);
+		return;
+	}
+	if(root->left){
+		addLeafNode(root->left,res);
+	}
+	if(root->right){
+		addLeafNode(root->right,res);
+	}
+}
+vector<int> traverseBoundary(TreeNode<int>* root){
+vector<int> res;
+if(!root)return res;
+if(!isleaf(root)){
+	res.push_back(root->data);
+}
+addLeafNode(root,res);
+addLeafNode(root,res);
+addrightBoundary(root,res);
+return res;
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();

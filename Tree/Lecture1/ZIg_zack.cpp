@@ -44,53 +44,41 @@ void file_i_o()
 	    freopen("output.txt", "w", stdout);
 	#endif
 }
-string minWindow(string s, string t) {
-std::unordered_map<char,int> mp1;
-for(int i=0;i<t.size();i++){
-	mp1[t[i]]++;
-}
-int cnt=t.size();
-int mcnt=0;
-int n=s.size();
-std::unordered_map<char,int> mp2;  
-std::string o_ans;
-int i=0;
-int j=0;
-while(true){
-	bool f1=false;
-	bool f2=false;
-	while(i<s.size() && mcnt<cnt){
-		char ch=s[i];
-		mp2[ch]+=1;
-		if(mp2[ch]<=mp1[ch]){
-			mcnt+=1;
-		}
-		f1=true;
-		i++;
-	}
-	while(j<i && mcnt==cnt){
-		string ans=s.substr(j,i-j);
-		if(o_ans.size()==0 || ans.size()<o_ans.size()){
-			o_ans=ans;
-		}
-		char ch=s[j];
-		if(mp2[ch]==1){
-			mp2.erase(ch);
-		}
-		else{
-			mp2[ch]-=1;
-		}
-		if(mp2[ch]<mp1[ch]){
-			mcnt-=1;
-		}
-		f2=true;
-		j++;
-	}
-	if(f1==false && f2==false){
-		break;
-	}
-}
-return o_ans;
+class Node {
+  public:
+    int val;
+  Node * left, * right;
+};
+vector < vector < int >> zigzagLevelOrder(Node * root) {
+   vector < vector < int >> result;
+  if (root == NULL) {
+    return result;
+  }
+  else{
+  	std::queue<Node*> qu;
+  	bool flag=true;
+  	qu.push(root);
+  	vector<vector<int>> ans;
+  	while(not qu.empty()){
+  		int size=qu.size();
+  		vector<int> temp(size);
+  	    for(int i=0;i<size;i++){
+  			Node *x=qu.front();
+  			qu.pop();
+  			int idx=(flag)?i:(size-1-i);
+  			temp[idx]=x->val;
+  			if(x->left){
+  				qu.push(x->left);
+  			}
+  			if(x->right){
+  				qu.push(x->right);
+  			}
+  		}
+  		flag=!flag;
+  		ans.push(temp);
+  	}
+  }
+  return ans;
 }
 int main(int argc, char const *argv[]) {
 	file_i_o();
