@@ -123,7 +123,7 @@ void dfs(int src,int k,std::vector<int>&visited){
 	if(visited[src]){
 		return;
 	}
-	visited[src]=true;
+ 
 	if(k==0){
 		res.push_back(src);
 	}
